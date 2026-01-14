@@ -1,8 +1,8 @@
 import api from './api';
 
 export interface UpdateProfilDto {
-  prenom?: string;
-  nom?: string;
+  firstName?: string;
+  lastName?: string;
   email?: string;
 }
 

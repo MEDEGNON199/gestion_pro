@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { 
-  Mail, Lock, User, Eye, EyeOff, ArrowRight, AlertCircle, Check, Gift
+  Mail, Lock, User, Eye, EyeOff, ArrowRight, AlertCircle, Check, Gift, 
+  Sparkles, Zap, Target, Users, TrendingUp, CheckCircle2
 } from 'lucide-react';
 
 export default function AuthPage() {
@@ -12,8 +13,8 @@ export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [prenom, setPrenom] = useState('');
-  const [nom, setNom] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -24,26 +25,26 @@ export default function AuthPage() {
 
   useEffect(() => {
     if (invitationToken) {
-      setIsLogin(false); // Basculer sur inscription si invitation
+      setIsLogin(false);
     }
   }, [invitationToken]);
 
-  const validateEmail = (value) => {
+  const validateEmail = (value: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     setEmailValid(emailRegex.test(value));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     
     if (!emailValid && email) {
-      setError('Veuillez entrer un email valide');
+      setError('Please enter a valid email');
       return;
     }
 
     if (password.length < 6) {
-      setError('Le mot de passe doit contenir au moins 6 caractères');
+      setError('Password must be at least 6 characters');
       return;
     }
 
@@ -56,105 +57,70 @@ export default function AuthPage() {
         await register(email, password, prenom, nom);
       }
 
-      // Redirection après authentification
       if (invitationToken) {
         navigate(`/invitations/${invitationToken}`);
       } else {
         navigate('/dashboard');
       }
-    } catch (err) {
-      setError(err.response?.data?.message || 'Une erreur est survenue');
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'An error occurred');
     } finally {
       setIsLoading(false);
     }
   };
 
+  const features = [
+    { icon: Zap, title: 'Kanban Boards', desc: 'Visual task management' },
+    { icon: Users, title: 'Team Collaboration', desc: 'Work together seamlessly' },
+    { icon: TrendingUp, title: 'Analytics', desc: 'Track your progress' },
+    { icon: Target, title: 'Goal Tracking', desc: 'Stay on target' },
+  ];
+
   return (
-    <div className="min-h-screen bg-white flex">
-      {/* Section gauche - Branding minimal */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-12 flex-col justify-between relative overflow-hidden">
-        {/* Subtle background */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 right-20 w-72 h-72 bg-blue-500 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 left-20 w-96 h-96 bg-purple-500 rounded-full blur-3xl"></div>
-        </div>
-
-        <div className="relative z-10">
-          {/* Logo */}
-          <div className="flex items-center gap-3 mb-16">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg"></div>
-            <span className="text-2xl font-bold text-white">TaskFlow</span>
-          </div>
-
-          {/* Message principal */}
-          <div className="max-w-md">
-            <h1 className="text-4xl font-bold text-white mb-6 leading-tight">
-              Gérez vos projets avec simplicité
-            </h1>
-            <p className="text-lg text-slate-300 leading-relaxed">
-              Une plateforme intuitive pour organiser vos tâches, 
-              collaborer avec votre équipe et suivre vos progrès en temps réel.
-            </p>
-          </div>
-        </div>
-
-        {/* Points clés */}
-        <div className="relative z-10 space-y-4">
-          {[
-            'Tableaux Kanban intuitifs',
-            'Collaboration en temps réel',
-            'Notifications intelligentes'
-          ].map((feature, i) => (
-            <div key={i} className="flex items-center gap-3 text-slate-300">
-              <div className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                <Check className="w-3 h-3 text-emerald-400" />
-              </div>
-              <span>{feature}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Section droite - Formulaire */}
-      <div className="flex-1 flex items-center justify-center p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex">
+      {/* Left Side - Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
-          {/* Message d'invitation */}
+          {/* Logo */}
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+                <Sparkles className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-slate-900">TaskFlow</h1>
+                <p className="text-sm text-slate-600">Manage projects effortlessly</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Invitation Message */}
           {invitationToken && (
-            <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg flex items-start gap-3">
+            <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-xl flex items-start gap-3">
               <div className="bg-gradient-to-br from-blue-500 to-purple-600 p-2 rounded-lg">
                 <Gift className="w-4 h-4 text-white" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-slate-900">
-                  Invitation reçue !
-                </p>
-                <p className="text-xs text-slate-600 mt-1">
-                  Créez un compte pour rejoindre votre équipe.
-                </p>
+                <p className="text-sm font-semibold text-slate-900">You've been invited!</p>
+                <p className="text-xs text-slate-600 mt-1">Create an account to join your team.</p>
               </div>
             </div>
           )}
 
           {/* Header */}
           <div className="mb-8">
-            {/* Logo mobile */}
-            <div className="lg:hidden flex items-center gap-3 mb-8">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg"></div>
-              <span className="text-xl font-bold text-slate-900">TaskFlow</span>
-            </div>
-
             <h2 className="text-3xl font-bold text-slate-900 mb-2">
-              {isLogin ? 'Bon retour' : 'Créer un compte'}
+              {isLogin ? 'Welcome back' : 'Create account'}
             </h2>
             <p className="text-slate-600">
               {isLogin 
-                ? 'Connectez-vous pour accéder à votre espace' 
-                : 'Commencez gratuitement dès maintenant'}
+                ? 'Sign in to access your workspace' 
+                : 'Get started with TaskFlow today'}
             </p>
           </div>
 
           {/* Toggle */}
-          <div className="flex gap-2 mb-8 p-1 bg-slate-100 rounded-lg">
+          <div className="flex gap-2 mb-6 p-1 bg-slate-200 rounded-lg">
             <button
               onClick={() => {
                 setIsLogin(true);
@@ -166,7 +132,7 @@ export default function AuthPage() {
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              Connexion
+              Sign In
             </button>
             <button
               onClick={() => {
@@ -179,7 +145,7 @@ export default function AuthPage() {
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              Inscription
+              Sign Up
             </button>
           </div>
 
@@ -193,19 +159,19 @@ export default function AuthPage() {
 
           {/* Form */}
           <div className="space-y-5">
-            {/* Nom/Prénom */}
+            {/* Name fields */}
             {!isLogin && (
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Prénom
+                    First Name
                   </label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                     <input
                       type="text"
-                      value={prenom}
-                      onChange={(e) => setPrenom(e.target.value)}
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
                       className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                       placeholder="John"
                       required
@@ -214,14 +180,14 @@ export default function AuthPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Nom
+                    Last Name
                   </label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                     <input
                       type="text"
-                      value={nom}
-                      onChange={(e) => setNom(e.target.value)}
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
                       className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                       placeholder="Doe"
                       required
@@ -234,7 +200,7 @@ export default function AuthPage() {
             {/* Email */}
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">
-                Email
+                Email Address
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -246,7 +212,7 @@ export default function AuthPage() {
                     validateEmail(e.target.value);
                   }}
                   className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-                  placeholder="vous@exemple.com"
+                  placeholder="you@example.com"
                   required
                 />
                 {email && emailValid && (
@@ -259,14 +225,14 @@ export default function AuthPage() {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="block text-sm font-medium text-slate-700">
-                  Mot de passe
+                  Password
                 </label>
                 {isLogin && (
                   <button
                     type="button"
                     className="text-sm text-blue-600 hover:text-blue-700 font-medium"
                   >
-                    Oublié?
+                    Forgot?
                   </button>
                 )}
               </div>
@@ -291,7 +257,7 @@ export default function AuthPage() {
               </div>
               {!isLogin && password.length > 0 && password.length < 6 && (
                 <p className="text-xs text-red-600 mt-2">
-                  Minimum 6 caractères requis
+                  Minimum 6 characters required
                 </p>
               )}
             </div>
@@ -305,11 +271,11 @@ export default function AuthPage() {
               {isLoading ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  <span>Chargement...</span>
+                  <span>Loading...</span>
                 </>
               ) : (
                 <>
-                  <span>{isLogin ? 'Se connecter' : 'Créer mon compte'}</span>
+                  <span>{isLogin ? 'Sign In' : 'Create Account'}</span>
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </>
               )}
@@ -318,7 +284,7 @@ export default function AuthPage() {
 
           {/* Footer */}
           <p className="mt-6 text-center text-sm text-slate-600">
-            {isLogin ? "Pas encore de compte?" : "Déjà inscrit?"}{' '}
+            {isLogin ? "Don't have an account?" : "Already have an account?"}{' '}
             <button
               onClick={() => {
                 setIsLogin(!isLogin);
@@ -326,16 +292,88 @@ export default function AuthPage() {
               }}
               className="text-blue-600 font-semibold hover:text-blue-700"
             >
-              {isLogin ? "S'inscrire" : "Se connecter"}
+              {isLogin ? 'Sign up' : 'Sign in'}
             </button>
           </p>
 
-          {/* Trust badges */}
           {!isLogin && (
-            <p className="mt-8 text-xs text-center text-slate-500">
-              En créant un compte, vous acceptez nos conditions d'utilisation
+            <p className="mt-6 text-xs text-center text-slate-500">
+              By creating an account, you agree to our Terms of Service
             </p>
           )}
+        </div>
+      </div>
+
+      {/* Right Side - Image/Illustration */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 p-12 items-center justify-center relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-20 right-20 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 left-20 w-96 h-96 bg-blue-300 rounded-full blur-3xl"></div>
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 max-w-lg">
+          <div className="mb-8">
+            <h2 className="text-5xl font-bold text-white mb-4 leading-tight">
+              Manage projects like a pro
+            </h2>
+            <p className="text-xl text-blue-100">
+              Collaborate with your team, track progress, and deliver projects on time.
+            </p>
+          </div>
+
+          {/* Features Grid */}
+          <div className="grid grid-cols-2 gap-4 mb-8">
+            {features.map((feature, index) => {
+              const Icon = feature.icon;
+              return (
+                <div
+                  key={index}
+                  className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl p-4 hover:bg-white/20 transition-all"
+                >
+                  <div className="bg-white/20 w-10 h-10 rounded-lg flex items-center justify-center mb-3">
+                    <Icon className="w-5 h-5 text-white" />
+                  </div>
+                  <h3 className="font-bold text-white text-sm mb-1">{feature.title}</h3>
+                  <p className="text-xs text-blue-100">{feature.desc}</p>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Stats */}
+          <div className="flex items-center gap-8 pt-8 border-t border-white/20">
+            <div>
+              <p className="text-3xl font-bold text-white">10,000+</p>
+              <p className="text-sm text-blue-100">Active Users</p>
+            </div>
+            <div>
+              <p className="text-3xl font-bold text-white">50,000+</p>
+              <p className="text-sm text-blue-100">Projects Completed</p>
+            </div>
+          </div>
+
+          {/* Testimonial */}
+          <div className="mt-8 bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl p-5">
+            <div className="flex items-center gap-2 mb-3">
+              {[...Array(5)].map((_, i) => (
+                <CheckCircle2 key={i} className="w-4 h-4 text-yellow-300 fill-yellow-300" />
+              ))}
+            </div>
+            <p className="text-white text-sm italic mb-3">
+              "TaskFlow transformed how our team works. The best project management tool we've used!"
+            </p>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-400 flex items-center justify-center text-white font-bold">
+                SM
+              </div>
+              <div>
+                <p className="text-white font-semibold text-sm">Sarah Miller</p>
+                <p className="text-blue-100 text-xs">Product Manager at TechCo</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
