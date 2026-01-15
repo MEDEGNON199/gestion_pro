@@ -1,24 +1,35 @@
-# Image de base Node.js
-FROM node:20-alpine
+FROM node:20-alpine AS builder
 
-# Dossier de travail dans le conteneur
 WORKDIR /app
 
-# Copier les fichiers package.json
+# Copier package files
 COPY package*.json ./
 
 # Installer les dépendances
-RUN npm install
+RUN npm ci
 
-# Copier tout le code source
+# Copier le code source
 COPY . .
 
-# Exposer le port 3000
-EXPOSE 3000
+# Build l'application (génère /dist)
+RUN npm run build
 
-# Commande pour démarrer l'application
-CMD ["npm", "run", "start:dev"]
+# ===== STAGE 2: Production =====
+FROM node:20-alpine
 
+WORKDIR /app
 
+# Copier package files
+COPY package*.json ./
 
+# Installer SEULEMENT les dépendances de production
+RUN npm ci --only=production
 
+# Copier le build depuis le stage précédent
+COPY --from=builder /app/dist ./dist
+
+# Exposer le port
+EXPOSE 8000
+
+# ✅ Lancer la version buildée (pas de watch!)
+CMD ["node", "dist/main"]
