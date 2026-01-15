@@ -6,15 +6,17 @@ COPY package*.json ./
 RUN npm ci
 
 COPY . .
-RUN npm run build
 
-# ===== STAGE 2: Production =====
+# 🔴 Limite mémoire pendant le build
+RUN NODE_OPTIONS="--max_old_space_size=256" npm run build
+
+# ===== STAGE 2 =====
 FROM node:20-alpine
 
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm ci --omit=dev
 
 COPY --from=builder /app/dist ./dist
 
