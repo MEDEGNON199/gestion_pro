@@ -6,9 +6,9 @@ import {
   Sparkles, Zap, Target, Users, TrendingUp, CheckCircle2
 } from 'lucide-react';
 
-const [prenom] = useState(''); // supprime setPrenom
-const [nom] = useState(''); // supprime setNom
-
+// ❌ SUPPRIMER CES DEUX LIGNES :
+// const [prenom] = useState('');
+// const [nom] = useState('');
 
 export default function AuthPage() {
   const [searchParams] = useSearchParams();
@@ -58,7 +58,8 @@ export default function AuthPage() {
       if (isLogin) {
         await login(email, password);
       } else {
-        await register(email, password, prenom, nom);
+        // ✅ Utiliser firstName et lastName (pas prenom/nom)
+        await register(email, password, firstName, lastName);
       }
 
       if (invitationToken) {
@@ -72,6 +73,8 @@ export default function AuthPage() {
       setIsLoading(false);
     }
   };
+
+  // ... reste du code identique
 
   const features = [
     { icon: Zap, title: 'Kanban Boards', desc: 'Visual task management' },
