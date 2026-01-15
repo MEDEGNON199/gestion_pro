@@ -2,7 +2,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { dashboardService } from '../services/dashboard.services';
-import { TrendingUp, CheckCircle2, Clock, Folder, Calendar, ArrowRight, Activity, Zap, Rocket, Target } from 'lucide-react';
+import { CheckCircle2, Clock, Folder, Calendar, ArrowRight, Activity, Zap, Rocket, Target } from 'lucide-react';
 import { PieChart, Pie, Cell, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 export default function Dashboard() {

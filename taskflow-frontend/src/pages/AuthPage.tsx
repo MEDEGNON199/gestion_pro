@@ -6,6 +6,10 @@ import {
   Sparkles, Zap, Target, Users, TrendingUp, CheckCircle2
 } from 'lucide-react';
 
+const [prenom] = useState(''); // supprime setPrenom
+const [nom] = useState(''); // supprime setNom
+
+
 export default function AuthPage() {
   const [searchParams] = useSearchParams();
   const invitationToken = searchParams.get('invitation');

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Search, Folder, Zap, Archive, Palette } from 'lucide-react';
+import { Plus, Search, Folder, Zap, Archive } from 'lucide-react';
 import { projetsService } from '../services/projets.service';
 import ProjetCard from '../components/ProjetCard';
 

@@ -1,16 +1,21 @@
 import api from './api';
 
-export enum StatutTache {
-  A_FAIRE = 'A_FAIRE',
-  EN_COURS = 'EN_COURS',
-  TERMINEE = 'TERMINEE',
-}
+// ✅ Remplacer enum par const
+export const StatutTache = {
+  A_FAIRE: 'A_FAIRE',
+  EN_COURS: 'EN_COURS',
+  TERMINEE: 'TERMINEE',
+} as const;
 
-export enum PrioriteTache {
-  BASSE = 'BASSE',
-  MOYENNE = 'MOYENNE',
-  HAUTE = 'HAUTE',
-}
+export type StatutTache = typeof StatutTache[keyof typeof StatutTache];
+
+export const PrioriteTache = {
+  BASSE: 'BASSE',
+  MOYENNE: 'MOYENNE',
+  HAUTE: 'HAUTE',
+} as const;
+
+export type PrioriteTache = typeof PrioriteTache[keyof typeof PrioriteTache];
 
 export interface Tache {
   id: string;

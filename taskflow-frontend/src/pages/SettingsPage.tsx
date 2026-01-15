@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Save, Lock, User as UserIcon, Check, Shield, Eye, EyeOff, Sparkles, Mail, Crown, AlertCircle, CheckCircle2, Settings as SettingsIcon } from 'lucide-react';
+import { Lock, User as UserIcon, Eye, EyeOff, AlertCircle, CheckCircle2, Settings as SettingsIcon } from 'lucide-react';
 import Avatar from '../components/Avatar';
 import { utilisateursService } from '../services/utilisateurs.service';
 
@@ -57,7 +57,7 @@ export default function SettingsPage() {
     setSuccessMessage('');
 
     try {
-      await utilisateursService.updateProfil({ prenom: firstName, nom: lastName, email });
+      await utilisateursService.updateProfil({ email });
       setSuccessMessage('Profile updated successfully!');
       setTimeout(() => window.location.reload(), 1000);
     } catch (error: any) {

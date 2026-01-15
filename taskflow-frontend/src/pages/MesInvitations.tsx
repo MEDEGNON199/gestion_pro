@@ -11,7 +11,7 @@ interface Invitation {
   statut: string;
   date_creation: string;
   date_expiration: string;
-  token: string;
+  token?: string; // <--- ici tu mets "?" pour dire que ce n’est pas obligatoire
   projet?: {
     id: string;
     nom: string;
@@ -21,6 +21,7 @@ interface Invitation {
     nom: string;
   };
 }
+
 
 const MyInvitations: React.FC = () => {
   const [invitations, setInvitations] = useState<Invitation[]>([]);
@@ -236,7 +237,7 @@ const MyInvitations: React.FC = () => {
 
                     <div className="flex flex-col sm:flex-row gap-3">
                       <button
-                        onClick={() => handleAccept(invitation.token)}
+                        onClick={() => invitation.token && handleAccept(invitation.token)}
                         disabled={isProcessing}
                         className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl hover:shadow-lg transition-all font-semibold"
                       >
@@ -245,7 +246,7 @@ const MyInvitations: React.FC = () => {
                         {isProcessing && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
                       </button>
                       <button
-                        onClick={() => handleDecline(invitation.token)}
+                        onClick={() => invitation.token && handleDecline(invitation.token)}
                         disabled={isProcessing}
                         className="flex items-center justify-center gap-2 px-6 py-3 bg-slate-100 hover:bg-red-50 border border-slate-200 hover:border-red-200 text-slate-700 hover:text-red-700 rounded-xl transition-all font-semibold"
                       >
