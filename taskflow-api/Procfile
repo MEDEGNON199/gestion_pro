@@ -1,0 +1,1 @@
+echo "web: node dist/main.js" > Procfile
