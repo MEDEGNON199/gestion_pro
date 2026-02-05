@@ -1,25 +1,104 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Bell, User, Settings, LogOut, ChevronDown } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useWebSocketContext } from '../contexts/WebSocketContext';
 import Avatar from './Avatar';
+import { WebSocketStatus } from './WebSocketStatus';
+import { notificationsService, Notification } from '../services/notifications.service';
 
 export default function Topbar() {
   const { user, logout } = useAuth();
+  const { state: wsState } = useWebSocketContext();
   const navigate = useNavigate();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      loadNotifications();
+      loadUnreadCount();
+      
+      // Rafraîchir toutes les 10 secondes pour les notifications
+      const interval = setInterval(() => {
+        loadNotifications();
+        loadUnreadCount();
+      }, 10000);
+
+      return () => clearInterval(interval);
+    }
+  }, [user]);
+
+  const loadNotifications = async () => {
+    try {
+      setLoading(true);
+      const data = await notificationsService.getAll();
+      setNotifications(data);
+    } catch (error) {
+      console.error('Erreur lors du chargement des notifications:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadUnreadCount = async () => {
+    try {
+      const count = await notificationsService.getUnreadCount();
+      setUnreadCount(count);
+    } catch (error) {
+      console.error('Erreur lors du chargement du nombre de notifications non lues:', error);
+    }
+  };
+
+  const handleNotificationClick = async (notification: Notification) => {
+    if (!notification.est_lue) {
+      try {
+        await notificationsService.markAsRead(notification.id);
+        setNotifications(prev => 
+          prev.map(n => n.id === notification.id ? { ...n, est_lue: true } : n)
+        );
+        setUnreadCount(prev => Math.max(0, prev - 1));
+      } catch (error) {
+        console.error('Erreur lors du marquage de la notification comme lue:', error);
+      }
+    }
+
+    // Navigation selon le type de notification
+    if (notification.type === 'INVITATION' && notification.invitation_id) {
+      navigate('/mes-invitations');
+    } else if (notification.tache_id && notification.projet_id) {
+      navigate(`/projets/${notification.projet_id}?tache=${notification.tache_id}`);
+    } else if (notification.projet_id) {
+      navigate(`/projets/${notification.projet_id}`);
+    }
+
+    setShowNotifications(false);
+  };
+
+  const formatTimeAgo = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    if (diffInSeconds < 60) {
+      return 'À l\'instant';
+    } else if (diffInSeconds < 3600) {
+      const minutes = Math.floor(diffInSeconds / 60);
+      return `Il y a ${minutes} min`;
+    } else if (diffInSeconds < 86400) {
+      const hours = Math.floor(diffInSeconds / 3600);
+      return `Il y a ${hours}h`;
+    } else {
+      const days = Math.floor(diffInSeconds / 86400);
+      return `Il y a ${days}j`;
+    }
+  };
 
   if (!user) return null;
-
-  const notifications = [
-    { id: 1, message: 'New invitation to project', time: '5 min ago', unread: true },
-    { id: 2, message: 'Task assigned: Design review', time: '1 hour ago', unread: true },
-    { id: 3, message: 'New comment on your task', time: '2 hours ago', unread: false },
-  ];
-
-  const unreadCount = notifications.filter(n => n.unread).length;
 
   const handleLogout = () => {
     logout();
@@ -46,10 +125,16 @@ export default function Topbar() {
 
           {/* Actions */}
           <div className="flex items-center gap-3">
+            {/* WebSocket Status */}
+            <WebSocketStatus />
+
             {/* Notifications */}
             <div className="relative">
               <button
-                onClick={() => {
+                onClick={async () => {
+                  if (!showNotifications) {
+                    await loadNotifications();
+                  }
                   setShowNotifications(!showNotifications);
                   setShowProfileMenu(false);
                 }}
@@ -69,24 +154,55 @@ export default function Topbar() {
                     onClick={() => setShowNotifications(false)}
                   />
                   <div className="absolute right-0 top-14 w-80 bg-white rounded-xl shadow-lg border border-slate-200 z-40">
-                    <div className="px-4 py-3 border-b border-slate-200">
-                      <h3 className="font-semibold text-slate-900">Notifications</h3>
+                    <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+                      <div>
+                        <h3 className="font-semibold text-slate-900">Notifications</h3>
+                        {unreadCount > 0 && (
+                          <p className="text-xs text-slate-500 mt-1">{unreadCount} non lue{unreadCount > 1 ? 's' : ''}</p>
+                        )}
+                      </div>
                       {unreadCount > 0 && (
-                        <p className="text-xs text-slate-500 mt-1">{unreadCount} unread</p>
+                        <button
+                          onClick={async () => {
+                            try {
+                              await notificationsService.markAllAsRead();
+                              setNotifications(prev => prev.map(n => ({ ...n, est_lue: true })));
+                              setUnreadCount(0);
+                            } catch (error) {
+                              console.error('Erreur lors du marquage de toutes les notifications comme lues:', error);
+                            }
+                          }}
+                          className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+                        >
+                          Tout marquer comme lu
+                        </button>
                       )}
                     </div>
                     <div className="max-h-80 overflow-y-auto">
-                      {notifications.map((notif) => (
-                        <div
-                          key={notif.id}
-                          className={`px-4 py-3 hover:bg-slate-50 border-b border-slate-100 last:border-0 ${
-                            notif.unread ? 'bg-blue-50/50' : ''
-                          }`}
-                        >
-                          <p className="text-sm text-slate-900">{notif.message}</p>
-                          <p className="text-xs text-slate-500 mt-1">{notif.time}</p>
+                      {loading ? (
+                        <div className="px-4 py-8 text-center text-sm text-slate-500">
+                          Chargement...
                         </div>
-                      ))}
+                      ) : notifications.length === 0 ? (
+                        <div className="px-4 py-8 text-center text-sm text-slate-500">
+                          Aucune notification
+                        </div>
+                      ) : (
+                        notifications.map((notif) => (
+                          <div
+                            key={notif.id}
+                            onClick={() => handleNotificationClick(notif)}
+                            className={`px-4 py-3 hover:bg-slate-50 border-b border-slate-100 last:border-0 cursor-pointer transition ${
+                              !notif.est_lue ? 'bg-blue-50/50' : ''
+                            }`}
+                          >
+                            <p className="text-sm text-slate-900">{notif.message}</p>
+                            <p className="text-xs text-slate-500 mt-1">
+                              {formatTimeAgo(notif.date_creation)}
+                            </p>
+                          </div>
+                        ))
+                      )}
                     </div>
                     <div className="px-4 py-3 border-t border-slate-200">
                       <button
@@ -96,7 +212,7 @@ export default function Topbar() {
                         }}
                         className="text-sm text-blue-600 hover:text-blue-700 font-medium"
                       >
-                        View all notifications →
+                        Voir toutes les notifications →
                       </button>
                     </div>
                   </div>

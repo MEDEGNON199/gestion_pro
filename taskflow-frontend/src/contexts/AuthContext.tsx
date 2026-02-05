@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           const response = await api.get('/auth/profile');
           setUser(response.data);
         } catch (error) {
-          console.error('Erreur lors du chargement du profil', error);
+          console.error('Error loading profile', error);
           localStorage.removeItem('token');
           setToken(null);
         }
@@ -92,10 +92,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth doit être utilisé dans un AuthProvider');
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 };
 
-// Export des types pour les autres fichiers
+// Export types for other files
 export type { Utilisateur };

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ForbiddenException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, ConflictException, Inject, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Tache, StatutTache } from './entities/tache.entity';
@@ -6,6 +6,8 @@ import { Projet } from '../projets/entities/projet.entity';
 import { CreateTacheDto } from './dto/create-tache.dto';
 import { UpdateTacheDto } from './dto/update-tache.dto';
 import { Utilisateur } from '../utilisateurs/entities/utilisateur.entity';
+import { NotificationsService } from '../notifications/notifications.service';
+import { TypeNotification } from '../notifications/entities/notification.entity';
 
 @Injectable()
 export class TachesService {
@@ -14,6 +16,8 @@ export class TachesService {
     private tacheRepository: Repository<Tache>,
     @InjectRepository(Projet)
     private projetRepository: Repository<Projet>,
+    @Inject(forwardRef(() => NotificationsService))
+    private notificationsService: NotificationsService,
   ) {}
 
   async create(createTacheDto: CreateTacheDto, utilisateur: Utilisateur) {
@@ -34,7 +38,20 @@ export class TachesService {
       cree_par: utilisateur.id,
     });
 
-    return await this.tacheRepository.save(nouvelleTache);
+    const tacheSauvegardee = await this.tacheRepository.save(nouvelleTache);
+
+    // Créer une notification si la tâche est assignée à quelqu'un d'autre
+    if (createTacheDto.assigne_a && createTacheDto.assigne_a !== utilisateur.id) {
+      await this.notificationsService.createNotification(
+        createTacheDto.assigne_a,
+        TypeNotification.TACHE_ASSIGNEE,
+        `${utilisateur.prenom} ${utilisateur.nom} vous a assigné la tâche "${tacheSauvegardee.titre}"`,
+        tacheSauvegardee.projet_id,
+        tacheSauvegardee.id,
+      );
+    }
+
+    return tacheSauvegardee;
   }
 
   async findAllByProjet(projetId: string, utilisateur: Utilisateur) {
@@ -114,9 +131,20 @@ export class TachesService {
 
     tache.assigne_a = utilisateurId;
 
-    await this.tacheRepository.save(tache);
+    const tacheSauvegardee = await this.tacheRepository.save(tache);
 
-    return { message: 'Tâche assignée avec succès', tache };
+    // Créer une notification pour l'utilisateur assigné
+    if (utilisateurId !== utilisateur.id) {
+      await this.notificationsService.createNotification(
+        utilisateurId,
+        TypeNotification.TACHE_ASSIGNEE,
+        `${utilisateur.prenom} ${utilisateur.nom} vous a assigné la tâche "${tache.titre}"`,
+        tache.projet_id,
+        tache.id,
+      );
+    }
+
+    return { message: 'Tâche assignée avec succès', tache: tacheSauvegardee };
   }
 
   async addEtiquette(tacheId: string, etiquetteId: string, utilisateur: Utilisateur) {

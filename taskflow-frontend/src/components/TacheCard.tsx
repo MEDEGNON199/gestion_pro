@@ -1,6 +1,7 @@
-import { Calendar, MoreVertical, Edit2, Trash2 } from 'lucide-react';
+import { Calendar, MoreVertical, Edit2, Trash2, User } from 'lucide-react';
 import { Tache, StatutTache, PrioriteTache } from '../services/taches.service';
 import { useState } from 'react';
+import Avatar from './Avatar';
 
 // ✅ Définir l'interface TacheCardProps
 interface TacheCardProps {
@@ -28,7 +29,13 @@ export default function TacheCard({ tache, onEdit, onDelete, onClick }: TacheCar
   return (
     <div 
       onClick={() => onClick(tache)}
-      className="bg-white p-4 rounded-lg border border-slate-200 hover:shadow-md transition-shadow cursor-pointer relative"
+      className={`
+        bg-white p-4 rounded-lg border hover:shadow-md transition-shadow cursor-pointer relative
+        ${tache.utilisateur_assigne 
+          ? 'border-slate-200 ring-1 ring-blue-100' 
+          : 'border-slate-200 border-dashed'
+        }
+      `}
     >
       {/* Menu */}
       <div className="absolute top-3 right-3">
@@ -88,21 +95,44 @@ export default function TacheCard({ tache, onEdit, onDelete, onClick }: TacheCar
         </p>
       )}
 
-      <div className="flex items-center gap-2 mt-3">
-        {/* Priority */}
-        <span
-          className={`px-2 py-1 rounded-md border text-xs font-medium ${priorityColors[tache.priorite]}`}
-        >
-          {priorityLabels[tache.priorite]}
-        </span>
+      <div className="flex items-center justify-between gap-2 mt-3">
+        <div className="flex items-center gap-2">
+          {/* Priority */}
+          <span
+            className={`px-2 py-1 rounded-md border text-xs font-medium ${priorityColors[tache.priorite]}`}
+          >
+            {priorityLabels[tache.priorite]}
+          </span>
 
-        {/* Due date */}
-        {tache.date_echeance && (
-          <div className="flex items-center gap-1 text-xs text-slate-500">
-            <Calendar className="w-3 h-3" />
-            <span>{new Date(tache.date_echeance).toLocaleDateString()}</span>
-          </div>
-        )}
+          {/* Due date */}
+          {tache.date_echeance && (
+            <div className="flex items-center gap-1 text-xs text-slate-500">
+              <Calendar className="w-3 h-3" />
+              <span>{new Date(tache.date_echeance).toLocaleDateString()}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Assignation */}
+        <div className="flex items-center gap-1">
+          {tache.utilisateur_assigne ? (
+            <div className="flex items-center gap-1.5">
+              <Avatar 
+                prenom={tache.utilisateur_assigne.prenom} 
+                nom={tache.utilisateur_assigne.nom} 
+                size="xs" 
+              />
+              <span className="text-xs text-slate-600 hidden sm:inline">
+                {tache.utilisateur_assigne.prenom}
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1 text-xs text-slate-400">
+              <User className="w-3 h-3" />
+              <span className="hidden sm:inline">Non assignée</span>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

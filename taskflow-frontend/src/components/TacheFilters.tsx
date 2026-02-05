@@ -1,33 +1,37 @@
 import { Search, X, Filter } from 'lucide-react';
 import { useState } from 'react';
+import FilterByAssignee from './FilterByAssignee/FilterByAssignee';
 
 export interface Filters {
   search: string;
   priorite: string;
   hasEcheance: boolean;
+  assigneA: string | null; // null = tous, "unassigned" = non assignés, userId = assigné spécifique
 }
 
 interface TacheFiltersProps {
   filters: Filters;
   onFiltersChange: (filters: Filters) => void;
+  projectId: string;
 }
 
-export default function TacheFilters({ filters, onFiltersChange }: TacheFiltersProps) {
+export default function TacheFilters({ filters, onFiltersChange, projectId }: TacheFiltersProps) {
   const [showFilters, setShowFilters] = useState(false);
 
-  const hasActiveFilters = filters.priorite !== 'ALL' || filters.hasEcheance;
+  const hasActiveFilters = filters.priorite !== 'ALL' || filters.hasEcheance || filters.assigneA !== null;
 
   const resetFilters = () => {
     onFiltersChange({
       search: '',
       priorite: 'ALL',
       hasEcheance: false,
+      assigneA: null,
     });
   };
 
   return (
     <div className="space-y-4 mb-6">
-      {/* Barre de recherche */}
+      {/* Barre de recherche et filtres */}
       <div className="flex gap-3">
         <div className="flex-1 relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -39,6 +43,13 @@ export default function TacheFilters({ filters, onFiltersChange }: TacheFiltersP
             className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent outline-none"
           />
         </div>
+
+        {/* Filtre par assigné */}
+        <FilterByAssignee
+          value={filters.assigneA}
+          onChange={(assigneA) => onFiltersChange({ ...filters, assigneA })}
+          projectId={projectId}
+        />
 
         <button
           onClick={() => setShowFilters(!showFilters)}

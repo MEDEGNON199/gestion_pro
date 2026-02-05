@@ -130,7 +130,7 @@ export default function InvitationAccept() {
                   onClick={() => navigate('/mes-invitations')}
                   className="flex-1 px-6 py-3 border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 transition font-medium"
                 >
-                  Mes invitations
+                  My Invitations
                 </button>
                 <button
                   onClick={() => navigate('/dashboard')}

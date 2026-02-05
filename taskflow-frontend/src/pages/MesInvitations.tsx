@@ -49,7 +49,7 @@ const MyInvitations: React.FC = () => {
     try {
       const result = await invitationsService.accepter(token);
       setTimeout(() => {
-        navigate(`/projects/${result.projet.id}`);
+        navigate(`/projets/${result.projet.id}/taches`);
       }, 1000);
     } catch (error: any) {
       alert(error.response?.data?.message || 'Error accepting invitation');
@@ -181,7 +181,7 @@ const MyInvitations: React.FC = () => {
               You currently have no pending invitations
             </p>
             <button
-              onClick={() => navigate('/projects')}
+              onClick={() => navigate('/projets')}
               className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all font-semibold"
             >
               <span>Back to Projects</span>

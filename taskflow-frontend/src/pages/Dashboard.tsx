@@ -2,7 +2,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { dashboardService } from '../services/dashboard.services';
-import { CheckCircle2, Clock, Folder, Calendar, ArrowRight, Activity, Zap, Rocket, Target } from 'lucide-react';
+import { CheckCircle2, Clock, Folder, Calendar, ArrowRight, Activity, Zap, Rocket, Target, TrendingUp, Users, Star } from 'lucide-react';
 import { PieChart, Pie, Cell, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 export default function Dashboard() {
@@ -39,10 +39,14 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-600 font-semibold">Loading dashboard...</p>
+          <div className="relative">
+            <div className="w-20 h-20 border-4 border-blue-200 rounded-full animate-spin"></div>
+            <div className="absolute top-0 left-0 w-20 h-20 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+          <p className="text-slate-700 font-semibold mt-6 text-lg">Loading your dashboard...</p>
+          <p className="text-slate-500 text-sm mt-2">Preparing your workspace</p>
         </div>
       </div>
     );
@@ -50,13 +54,16 @@ export default function Dashboard() {
 
   if (!stats) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
-        <div className="text-center">
-          <Activity className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-          <p className="text-slate-600 font-semibold mb-4">Unable to load statistics</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center bg-white rounded-2xl p-8 shadow-xl border border-slate-200">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Activity className="w-8 h-8 text-red-600" />
+          </div>
+          <h3 className="text-xl font-bold text-slate-900 mb-2">Unable to load statistics</h3>
+          <p className="text-slate-600 mb-6">There was an issue loading your dashboard data</p>
           <button 
             onClick={() => window.location.reload()} 
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:shadow-lg transition-all font-semibold"
           >
             Try Again
           </button>
@@ -78,79 +85,120 @@ export default function Dashboard() {
       label: 'Active Projects',
       value: stats.projetsActifs,
       icon: Rocket,
-      bgColor: 'bg-blue-50',
+      bgGradient: 'from-blue-500 to-blue-600',
+      bgLight: 'bg-blue-50',
+      iconBg: 'bg-blue-100',
       iconColor: 'text-blue-600',
       borderColor: 'border-blue-200',
+      trend: '+12%',
+      trendUp: true,
     },
     {
       label: 'Tasks In Progress',
       value: stats.tachesEnCours,
       icon: Zap,
-      bgColor: 'bg-amber-50',
+      bgGradient: 'from-amber-500 to-orange-500',
+      bgLight: 'bg-amber-50',
+      iconBg: 'bg-amber-100',
       iconColor: 'text-amber-600',
       borderColor: 'border-amber-200',
+      trend: '+8%',
+      trendUp: true,
     },
     {
       label: 'Tasks Completed',
       value: stats.tachesTerminees,
       icon: CheckCircle2,
-      bgColor: 'bg-emerald-50',
+      bgGradient: 'from-emerald-500 to-green-500',
+      bgLight: 'bg-emerald-50',
+      iconBg: 'bg-emerald-100',
       iconColor: 'text-emerald-600',
       borderColor: 'border-emerald-200',
+      trend: '+24%',
+      trendUp: true,
     },
     {
       label: 'Completion Rate',
       value: `${stats.tauxCompletion}%`,
       icon: Target,
-      bgColor: 'bg-purple-50',
+      bgGradient: 'from-purple-500 to-indigo-500',
+      bgLight: 'bg-purple-50',
+      iconBg: 'bg-purple-100',
       iconColor: 'text-purple-600',
       borderColor: 'border-purple-200',
+      trend: '+5%',
+      trendUp: true,
     },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-10">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-4xl font-bold text-slate-900 mb-2">
-                {timeOfDay}, {user.prenom} 👋
-              </h1>
-              <p className="text-slate-600 text-lg">
+            <div className="animate-fade-in">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <Star className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+                    {timeOfDay}, {user.prenom} 👋
+                  </h1>
+                </div>
+              </div>
+              <p className="text-slate-600 text-lg font-medium">
                 Here's an overview of your projects and tasks
               </p>
+              <div className="flex items-center gap-2 mt-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-sm text-slate-500">All systems operational</span>
+              </div>
             </div>
-            <button
-              onClick={() => navigate('/projets')}
-              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all font-semibold"
-            >
-              <span>My Projects</span>
-              <ArrowRight className="w-5 h-5" />
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={() => navigate('/projets')}
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:shadow-xl hover:scale-105 transition-all duration-200 font-semibold group"
+              >
+                <span>My Projects</span>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           {statsCards.map((stat, index) => {
             const Icon = stat.icon;
             return (
               <div
                 key={index}
-                className={`${stat.bgColor} rounded-2xl p-6 border ${stat.borderColor} hover:shadow-md transition-shadow`}
+                className={`${stat.bgLight} rounded-2xl p-6 border ${stat.borderColor} hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer group relative overflow-hidden`}
+                style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="flex items-start justify-between mb-4">
-                  <div className={`p-3 bg-white rounded-xl shadow-sm`}>
-                    <Icon className={`w-6 h-6 ${stat.iconColor}`} />
+                {/* Background decoration */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-white/20 to-transparent rounded-full -translate-y-16 translate-x-16"></div>
+                
+                <div className="relative">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className={`p-3 ${stat.iconBg} rounded-xl shadow-sm group-hover:shadow-md transition-shadow`}>
+                      <Icon className={`w-6 h-6 ${stat.iconColor}`} />
+                    </div>
+                    <div className="flex items-center gap-1 text-xs font-semibold">
+                      <TrendingUp className={`w-3 h-3 ${stat.trendUp ? 'text-green-600' : 'text-red-600'}`} />
+                      <span className={stat.trendUp ? 'text-green-600' : 'text-red-600'}>
+                        {stat.trend}
+                      </span>
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <p className="text-3xl font-bold text-slate-900 mb-1">
-                    {stat.value}
-                  </p>
-                  <p className="text-slate-600 font-medium">{stat.label}</p>
+                  <div>
+                    <p className="text-3xl font-bold text-slate-900 mb-1 group-hover:scale-105 transition-transform">
+                      {stat.value}
+                    </p>
+                    <p className="text-slate-600 font-medium">{stat.label}</p>
+                  </div>
                 </div>
               </div>
             );
@@ -158,43 +206,52 @@ export default function Dashboard() {
         </div>
 
         {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
           {/* Monthly Progress */}
-          <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+          <div className="lg:col-span-2 bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300">
             <div className="mb-6">
-              <h3 className="text-xl font-bold text-slate-900 mb-1">
-                Monthly Progress
-              </h3>
-              <p className="text-slate-600">Task completion over time</p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-1">
+                    Monthly Progress
+                  </h3>
+                  <p className="text-slate-600">Task completion over time</p>
+                </div>
+                <div className="p-2 bg-gradient-to-r from-purple-100 to-blue-100 rounded-lg">
+                  <TrendingUp className="w-5 h-5 text-purple-600" />
+                </div>
+              </div>
             </div>
             <ResponsiveContainer width="100%" height={300}>
               <AreaChart data={stats.progressionMensuelle}>
                 <defs>
                   <linearGradient id="colorTaches" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.3} />
-                    <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0} />
+                    <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.4} />
+                    <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0.1} />
                   </linearGradient>
                   <linearGradient id="colorCompletees" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#10b981" stopOpacity={0.3} />
-                    <stop offset="100%" stopColor="#10b981" stopOpacity={0} />
+                    <stop offset="0%" stopColor="#10b981" stopOpacity={0.4} />
+                    <stop offset="100%" stopColor="#10b981" stopOpacity={0.1} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis 
                   dataKey="mois" 
                   stroke="#64748b" 
-                  style={{ fontSize: '12px' }} 
+                  style={{ fontSize: '12px', fontWeight: '500' }} 
                 />
                 <YAxis 
                   stroke="#64748b" 
-                  style={{ fontSize: '12px' }} 
+                  style={{ fontSize: '12px', fontWeight: '500' }} 
                 />
                 <Tooltip 
                   contentStyle={{ 
-                    backgroundColor: '#fff',
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
                     border: '1px solid #e2e8f0',
-                    borderRadius: '8px',
+                    borderRadius: '12px',
                     fontSize: '12px',
+                    fontWeight: '500',
+                    boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)',
                   }} 
                 />
                 <Legend />
@@ -202,7 +259,7 @@ export default function Dashboard() {
                   type="monotone" 
                   dataKey="taches" 
                   stroke="#8b5cf6" 
-                  strokeWidth={2} 
+                  strokeWidth={3} 
                   fill="url(#colorTaches)" 
                   name="Total Tasks" 
                 />
@@ -210,7 +267,7 @@ export default function Dashboard() {
                   type="monotone" 
                   dataKey="completees" 
                   stroke="#10b981" 
-                  strokeWidth={2} 
+                  strokeWidth={3} 
                   fill="url(#colorCompletees)" 
                   name="Completed" 
                 />
@@ -219,12 +276,19 @@ export default function Dashboard() {
           </div>
 
           {/* Task Distribution */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300">
             <div className="mb-6">
-              <h3 className="text-xl font-bold text-slate-900 mb-1">
-                Task Distribution
-              </h3>
-              <p className="text-slate-600">{totalTaches} total tasks</p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-1">
+                    Task Distribution
+                  </h3>
+                  <p className="text-slate-600">{totalTaches} total tasks</p>
+                </div>
+                <div className="p-2 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-lg">
+                  <Target className="w-5 h-5 text-blue-600" />
+                </div>
+              </div>
             </div>
             <ResponsiveContainer width="100%" height={200}>
               <PieChart>
@@ -236,25 +300,35 @@ export default function Dashboard() {
                   outerRadius={80} 
                   paddingAngle={5} 
                   dataKey="value"
+                  strokeWidth={2}
+                  stroke="#fff"
                 >
                   {repartitionData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '8px',
+                    fontSize: '12px',
+                    fontWeight: '500',
+                  }}
+                />
               </PieChart>
             </ResponsiveContainer>
-            <div className="space-y-2 mt-4">
+            <div className="space-y-3 mt-4">
               {repartitionData.map((item, index) => (
-                <div key={index} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
+                <div key={index} className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 transition-colors">
+                  <div className="flex items-center gap-3">
                     <div 
-                      className="w-3 h-3 rounded-full" 
+                      className="w-4 h-4 rounded-full shadow-sm" 
                       style={{ backgroundColor: item.color }}
                     />
-                    <span className="text-sm text-slate-600">{item.name}</span>
+                    <span className="text-sm font-medium text-slate-700">{item.name}</span>
                   </div>
-                  <span className="text-sm font-semibold text-slate-900">
+                  <span className="text-sm font-bold text-slate-900 bg-slate-100 px-2 py-1 rounded-md">
                     {item.value}
                   </span>
                 </div>
@@ -266,26 +340,37 @@ export default function Dashboard() {
         {/* Bottom Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Recent Activities */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300">
             <div className="mb-6">
-              <h3 className="text-xl font-bold text-slate-900 mb-1">
-                Recent Activities
-              </h3>
-              <p className="text-slate-600">Latest updates</p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-1">
+                    Recent Activities
+                  </h3>
+                  <p className="text-slate-600">Latest updates</p>
+                </div>
+                <div className="p-2 bg-gradient-to-r from-green-100 to-emerald-100 rounded-lg">
+                  <Activity className="w-5 h-5 text-green-600" />
+                </div>
+              </div>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-3 max-h-80 overflow-y-auto">
               {stats.activitesRecentes.length === 0 ? (
-                <div className="text-center py-8">
-                  <Activity className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                  <p className="text-slate-500">No recent activity</p>
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Activity className="w-8 h-8 text-slate-400" />
+                  </div>
+                  <p className="text-slate-500 font-medium">No recent activity</p>
+                  <p className="text-slate-400 text-sm mt-1">Your activities will appear here</p>
                 </div>
               ) : (
-                stats.activitesRecentes.map((activite: any) => (
+                stats.activitesRecentes.map((activite: any, index: number) => (
                   <div 
                     key={activite.id} 
-                    className="flex items-start gap-3 p-3 rounded-lg hover:bg-slate-50 transition-colors"
+                    className="flex items-start gap-4 p-4 rounded-xl hover:bg-slate-50 transition-all duration-200 cursor-pointer group border border-transparent hover:border-slate-200"
+                    style={{ animationDelay: `${index * 50}ms` }}
                   >
-                    <div className={`p-2 rounded-lg ${
+                    <div className={`p-2 rounded-lg shadow-sm group-hover:shadow-md transition-shadow ${
                       activite.type === 'create' ? 'bg-blue-100 text-blue-600' :
                       activite.type === 'complete' ? 'bg-emerald-100 text-emerald-600' :
                       'bg-amber-100 text-amber-600'
@@ -295,11 +380,14 @@ export default function Dashboard() {
                       {activite.type === 'comment' && <Activity className="w-4 h-4" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm text-slate-900 font-medium">
+                      <p className="text-sm text-slate-900 font-semibold group-hover:text-blue-600 transition-colors">
                         {activite.action}
                       </p>
-                      <p className="text-sm text-slate-600">{activite.projet}</p>
-                      <p className="text-xs text-slate-400 mt-1">{activite.temps}</p>
+                      <p className="text-sm text-slate-600 font-medium">{activite.projet}</p>
+                      <p className="text-xs text-slate-400 mt-1 flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        {activite.temps}
+                      </p>
                     </div>
                   </div>
                 ))
@@ -308,41 +396,58 @@ export default function Dashboard() {
           </div>
 
           {/* Upcoming Tasks */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300">
             <div className="mb-6">
-              <h3 className="text-xl font-bold text-slate-900 mb-1">
-                Upcoming Deadlines
-              </h3>
-              <p className="text-slate-600">Urgent tasks</p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-1">
+                    Upcoming Deadlines
+                  </h3>
+                  <p className="text-slate-600">Urgent tasks</p>
+                </div>
+                <div className="p-2 bg-gradient-to-r from-red-100 to-orange-100 rounded-lg">
+                  <Calendar className="w-5 h-5 text-red-600" />
+                </div>
+              </div>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-3 max-h-80 overflow-y-auto">
               {stats.tachesProchaines.length === 0 ? (
-                <div className="text-center py-8">
-                  <Calendar className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                  <p className="text-slate-500">No upcoming tasks</p>
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Calendar className="w-8 h-8 text-slate-400" />
+                  </div>
+                  <p className="text-slate-500 font-medium">No upcoming tasks</p>
+                  <p className="text-slate-400 text-sm mt-1">You're all caught up!</p>
                 </div>
               ) : (
-                stats.tachesProchaines.map((tache: any) => (
+                stats.tachesProchaines.map((tache: any, index: number) => (
                   <div 
                     key={tache.id} 
-                    className="p-4 border border-slate-200 rounded-lg hover:border-slate-300 hover:shadow-sm transition-all cursor-pointer"
+                    className="p-4 border border-slate-200 rounded-xl hover:border-slate-300 hover:shadow-lg transition-all duration-200 cursor-pointer group bg-white/50"
+                    style={{ animationDelay: `${index * 50}ms` }}
                   >
-                    <div className="flex items-start justify-between mb-2">
-                      <h4 className="font-semibold text-slate-900 line-clamp-1">
+                    <div className="flex items-start justify-between mb-3">
+                      <h4 className="font-semibold text-slate-900 line-clamp-1 group-hover:text-blue-600 transition-colors">
                         {tache.titre}
                       </h4>
-                      <span className={`text-xs px-2 py-1 rounded-full whitespace-nowrap ml-2 ${
-                        tache.priorite === 'HAUTE' ? 'bg-red-100 text-red-700' :
-                        tache.priorite === 'MOYENNE' ? 'bg-amber-100 text-amber-700' :
-                        'bg-slate-100 text-slate-700'
+                      <span className={`text-xs px-3 py-1 rounded-full whitespace-nowrap ml-2 font-semibold ${
+                        tache.priorite === 'HAUTE' ? 'bg-red-100 text-red-700 border border-red-200' :
+                        tache.priorite === 'MOYENNE' ? 'bg-amber-100 text-amber-700 border border-amber-200' :
+                        'bg-slate-100 text-slate-700 border border-slate-200'
                       }`}>
                         {tache.priorite}
                       </span>
                     </div>
-                    <p className="text-sm text-slate-600 mb-2">{tache.projet}</p>
-                    <div className="flex items-center gap-2 text-xs text-slate-500">
-                      <Clock className="w-3 h-3" />
-                      <span>{tache.echeance}</span>
+                    <p className="text-sm text-slate-600 mb-3 font-medium">{tache.projet}</p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-xs text-slate-500">
+                        <Clock className="w-3 h-3" />
+                        <span className="font-medium">{tache.echeance}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Users className="w-3 h-3 text-slate-400" />
+                        <span className="text-xs text-slate-500">Assigned</span>
+                      </div>
                     </div>
                   </div>
                 ))

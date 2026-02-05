@@ -84,7 +84,7 @@ export default function ProjetCard({ projet, onEdit, onDelete, onArchive }: Proj
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')) {
+                  if (confirm('Are you sure you want to delete this project?')) {
                     onDelete(projet.id);
                   }
                   setShowMenu(false);

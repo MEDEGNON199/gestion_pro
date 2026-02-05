@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, ForbiddenException, Inject, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Invitation, StatutInvitation } from './entities/invitation.entity';
@@ -7,6 +7,8 @@ import { Utilisateur } from '../utilisateurs/entities/utilisateur.entity';
 import { MembreProjet } from '../membres-projets/entities/membre-projet.entity';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
+import { NotificationsService } from '../notifications/notifications.service';
+import { TypeNotification } from '../notifications/entities/notification.entity';
 import * as crypto from 'crypto';
 
 @Injectable()
@@ -22,6 +24,8 @@ export class InvitationsService {
     private membreProjetRepository: Repository<MembreProjet>,
     private mailerService: MailerService,
     private configService: ConfigService,
+    @Inject(forwardRef(() => NotificationsService))
+    private notificationsService: NotificationsService,
   ) {}
 
   async inviter(
@@ -98,6 +102,18 @@ export class InvitationsService {
       });
 
       await this.invitationRepository.save(invitation);
+    }
+
+    // Créer une notification pour l'utilisateur invité s'il existe déjà
+    if (utilisateurExistant) {
+      await this.notificationsService.createNotification(
+        utilisateurExistant.id,
+        TypeNotification.INVITATION,
+        `${utilisateur.prenom} ${utilisateur.nom} vous a invité à rejoindre le projet "${projet.nom}"`,
+        projetId,
+        undefined,
+        invitation.id,
+      );
     }
 
     // Envoyer l'email

@@ -31,6 +31,18 @@ export interface Tache {
   position: number;
   date_creation: string;
   date_modification: string;
+  utilisateur_assigne?: {
+    id: string;
+    prenom: string;
+    nom: string;
+    email: string;
+  };
+  createur?: {
+    id: string;
+    prenom: string;
+    nom: string;
+    email: string;
+  };
 }
 
 export interface CreateTacheDto {

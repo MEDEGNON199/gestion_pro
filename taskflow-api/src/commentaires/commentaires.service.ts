@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, Inject, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Commentaire } from './entities/commentaire.entity';
@@ -6,6 +6,8 @@ import { Tache } from '../taches/entities/tache.entity';
 import { CreateCommentaireDto } from './dto/create-commentaire.dto';
 import { UpdateCommentaireDto } from './dto/update-commentaire.dto';
 import { Utilisateur } from '../utilisateurs/entities/utilisateur.entity';
+import { NotificationsService } from '../notifications/notifications.service';
+import { TypeNotification } from '../notifications/entities/notification.entity';
 
 @Injectable()
 export class CommentairesService {
@@ -14,6 +16,8 @@ export class CommentairesService {
     private commentaireRepository: Repository<Commentaire>,
     @InjectRepository(Tache)
     private tacheRepository: Repository<Tache>,
+    @Inject(forwardRef(() => NotificationsService))
+    private notificationsService: NotificationsService,
   ) {}
 
   async create(createCommentaireDto: CreateCommentaireDto, utilisateur: Utilisateur) {
@@ -35,7 +39,20 @@ export class CommentairesService {
       utilisateur_id: utilisateur.id,
     });
 
-    return await this.commentaireRepository.save(nouveauCommentaire);
+    const commentaireSauvegarde = await this.commentaireRepository.save(nouveauCommentaire);
+
+    // Créer une notification pour l'utilisateur assigné à la tâche (s'il existe et n'est pas le créateur du commentaire)
+    if (tache.assigne_a && tache.assigne_a !== utilisateur.id) {
+      await this.notificationsService.createNotification(
+        tache.assigne_a,
+        TypeNotification.COMMENTAIRE,
+        `${utilisateur.prenom} ${utilisateur.nom} a commenté la tâche "${tache.titre}"`,
+        tache.projet_id,
+        tache.id,
+      );
+    }
+
+    return commentaireSauvegarde;
   }
 
   async findAllByTache(tacheId: string, utilisateur: Utilisateur) {

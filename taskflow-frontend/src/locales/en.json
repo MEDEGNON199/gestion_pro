@@ -1,0 +1,320 @@
+{
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "createAccount": "Create Account",
+    "email": "Email",
+    "password": "Password",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "orContinueWith": "or continue with",
+    "google": "Google",
+    "github": "GitHub",
+    "loading": "Loading...",
+    "processing": "Processing...",
+    "signInToTaskFlow": "Sign In to TaskFlow",
+    "createYourAccount": "Create Your Account",
+    "youreInvited": "You're invited!",
+    "createAccountToJoin": "Create an account to join your team.",
+    "errors": {
+      "fillAllFields": "Please fill in all fields",
+      "validEmail": "Please enter a valid email",
+      "passwordLength": "Password must be at least 6 characters",
+      "genericError": "An error occurred"
+    }
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "projects": "Projects",
+    "tasks": "Tasks",
+    "team": "Team",
+    "settings": "Settings",
+    "logout": "Logout",
+    "myInvitations": "My Invitations"
+  },
+  "dashboard": {
+    "welcome": "Welcome back",
+    "overview": "Overview",
+    "recentProjects": "Recent Projects",
+    "recentTasks": "Recent Tasks",
+    "teamActivity": "Team Activity",
+    "statistics": {
+      "totalProjects": "Total Projects",
+      "activeTasks": "Active Tasks",
+      "completedTasks": "Completed Tasks",
+      "teamMembers": "Team Members"
+    }
+  },
+  "projects": {
+    "title": "Projects",
+    "createProject": "Create Project",
+    "projectName": "Project Name",
+    "description": "Description",
+    "status": "Status",
+    "members": "Members",
+    "tasks": "Tasks",
+    "progress": "Progress",
+    "dueDate": "Due Date",
+    "created": "Created",
+    "updated": "Updated",
+    "actions": "Actions",
+    "edit": "Edit",
+    "delete": "Delete",
+    "view": "View",
+    "noProjects": "No projects found",
+    "createFirstProject": "Create your first project to get started"
+  },
+  "tasks": {
+    "title": "Tasks",
+    "createTask": "Create Task",
+    "taskName": "Task Name",
+    "description": "Description",
+    "assignee": "Assignee",
+    "priority": "Priority",
+    "status": "Status",
+    "dueDate": "Due Date",
+    "project": "Project",
+    "labels": "Labels",
+    "comments": "Comments",
+    "attachments": "Attachments",
+    "activity": "Activity",
+    "subtasks": "Subtasks",
+    "dependencies": "Dependencies",
+    "timeTracking": "Time Tracking",
+    "estimatedTime": "Estimated Time",
+    "actualTime": "Actual Time",
+    "priorities": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "urgent": "Urgent"
+    },
+    "statuses": {
+      "todo": "To Do",
+      "inProgress": "In Progress",
+      "review": "Review",
+      "done": "Done"
+    },
+    "filters": {
+      "all": "All Tasks",
+      "myTasks": "My Tasks",
+      "assignedToMe": "Assigned to Me",
+      "createdByMe": "Created by Me",
+      "overdue": "Overdue",
+      "dueToday": "Due Today",
+      "dueThisWeek": "Due This Week"
+    },
+    "noTasks": "No tasks found",
+    "createFirstTask": "Create your first task to get started"
+  },
+  "team": {
+    "title": "Team",
+    "inviteMembers": "Invite Members",
+    "members": "Members",
+    "pendingInvitations": "Pending Invitations",
+    "role": "Role",
+    "joinedDate": "Joined Date",
+    "lastActive": "Last Active",
+    "actions": "Actions",
+    "remove": "Remove",
+    "changeRole": "Change Role",
+    "resendInvitation": "Resend Invitation",
+    "cancelInvitation": "Cancel Invitation",
+    "roles": {
+      "owner": "Owner",
+      "admin": "Admin",
+      "member": "Member",
+      "viewer": "Viewer"
+    },
+    "inviteForm": {
+      "emailAddress": "Email Address",
+      "selectRole": "Select Role",
+      "personalMessage": "Personal Message (Optional)",
+      "sendInvitation": "Send Invitation"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "profile": "Profile",
+    "account": "Account",
+    "notifications": "Notifications",
+    "security": "Security",
+    "billing": "Billing",
+    "integrations": "Integrations",
+    "profileSettings": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "avatar": "Avatar",
+      "timezone": "Timezone",
+      "language": "Language",
+      "saveChanges": "Save Changes"
+    },
+    "notificationSettings": {
+      "emailNotifications": "Email Notifications",
+      "pushNotifications": "Push Notifications",
+      "taskAssignments": "Task Assignments",
+      "projectUpdates": "Project Updates",
+      "teamInvitations": "Team Invitations",
+      "deadlineReminders": "Deadline Reminders"
+    },
+    "securitySettings": {
+      "changePassword": "Change Password",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm Password",
+      "twoFactorAuth": "Two-Factor Authentication",
+      "activeSessions": "Active Sessions"
+    }
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "update": "Update",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "export": "Export",
+    "import": "Import",
+    "refresh": "Refresh",
+    "loading": "Loading...",
+    "noData": "No data available",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Info",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "reset": "Reset",
+    "clear": "Clear",
+    "select": "Select",
+    "selectAll": "Select All",
+    "deselectAll": "Deselect All",
+    "showMore": "Show More",
+    "showLess": "Show Less",
+    "viewAll": "View All",
+    "collapse": "Collapse",
+    "expand": "Expand"
+  },
+  "dates": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "tomorrow": "Tomorrow",
+    "thisWeek": "This Week",
+    "nextWeek": "Next Week",
+    "thisMonth": "This Month",
+    "nextMonth": "Next Month",
+    "overdue": "Overdue",
+    "dueIn": "Due in",
+    "days": "days",
+    "hours": "hours",
+    "minutes": "minutes",
+    "ago": "ago"
+  },
+  "notifications": {
+    "taskAssigned": "You have been assigned a new task",
+    "taskCompleted": "Task has been completed",
+    "projectCreated": "New project has been created",
+    "invitationReceived": "You have received a team invitation",
+    "deadlineApproaching": "Task deadline is approaching",
+    "commentAdded": "New comment has been added",
+    "statusChanged": "Task status has been changed"
+  },
+  "footer": {
+    "copyright": "TaskFlow Team © 2025",
+    "craftedWithPassion": "Crafted with passion",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "support": "Support",
+    "documentation": "Documentation"
+  },
+  "landing": {
+    "hero": {
+      "title": "Transform your workflow today",
+      "subtitle": "Join thousands of teams who trust TaskFlow to deliver exceptional results, streamline collaboration, and achieve their goals faster than ever.",
+      "cta": "Get Started Free",
+      "watchDemo": "Watch Demo"
+    },
+    "features": {
+      "title": "Everything you need to manage projects",
+      "subtitle": "Powerful features designed for modern teams",
+      "taskManagement": {
+        "title": "Task Management",
+        "description": "Create, assign, and track tasks with ease. Set priorities, due dates, and dependencies."
+      },
+      "teamCollaboration": {
+        "title": "Team Collaboration",
+        "description": "Work together seamlessly with real-time updates, comments, and file sharing."
+      },
+      "projectTracking": {
+        "title": "Project Tracking",
+        "description": "Monitor project progress with visual dashboards and detailed analytics."
+      },
+      "timeTracking": {
+        "title": "Time Tracking",
+        "description": "Track time spent on tasks and projects for better productivity insights."
+      }
+    },
+    "stats": {
+      "activeUsers": "Active Users",
+      "tasksCompleted": "Tasks Completed",
+      "uptime": "Uptime SLA",
+      "trustedByTeams": "Trusted by 50K+ teams",
+      "rating": "4.9/5 rating"
+    },
+    "testimonials": {
+      "title": "What our customers say",
+      "subtitle": "Don't just take our word for it"
+    },
+    "pricing": {
+      "title": "Simple, transparent pricing",
+      "subtitle": "Choose the plan that's right for your team",
+      "free": {
+        "title": "Free",
+        "price": "$0",
+        "description": "Perfect for small teams getting started",
+        "features": [
+          "Up to 5 team members",
+          "Unlimited projects",
+          "Basic task management",
+          "Email support"
+        ]
+      },
+      "pro": {
+        "title": "Pro",
+        "price": "$12",
+        "description": "Best for growing teams",
+        "features": [
+          "Up to 25 team members",
+          "Advanced analytics",
+          "Time tracking",
+          "Priority support",
+          "Custom integrations"
+        ]
+      },
+      "enterprise": {
+        "title": "Enterprise",
+        "price": "Custom",
+        "description": "For large organizations",
+        "features": [
+          "Unlimited team members",
+          "Advanced security",
+          "Custom workflows",
+          "Dedicated support",
+          "On-premise deployment"
+        ]
+      }
+    }
+  }
+}

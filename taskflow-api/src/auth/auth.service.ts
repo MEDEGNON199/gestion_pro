@@ -18,19 +18,19 @@ export class AuthService {
   async register(registerDto: RegisterDto) {
     const { email, mot_de_passe, prenom, nom } = registerDto;
 
-    // Vérifier si l'utilisateur existe déjà
+    // Check if user already exists
     const utilisateurExistant = await this.utilisateurRepository.findOne({
       where: { email },
     });
 
     if (utilisateurExistant) {
-      throw new ConflictException('Cet email est déjà utilisé');
+      throw new ConflictException('This email is already in use');
     }
 
-    // Hasher le mot de passe
+    // Hash the password
     const motDePasseHash = await bcrypt.hash(mot_de_passe, 10);
 
-    // Créer le nouvel utilisateur
+    // Create new user
     const nouvelUtilisateur = this.utilisateurRepository.create({
       email,
       mot_de_passe: motDePasseHash,
@@ -40,7 +40,7 @@ export class AuthService {
 
     await this.utilisateurRepository.save(nouvelUtilisateur);
 
-    // Générer le token JWT
+    // Generate JWT token
     const payload = { sub: nouvelUtilisateur.id, email: nouvelUtilisateur.email };
     const access_token = await this.jwtService.signAsync(payload);
 
@@ -58,23 +58,23 @@ export class AuthService {
   async login(loginDto: LoginDto) {
     const { email, mot_de_passe } = loginDto;
 
-    // Trouver l'utilisateur
+    // Find user
     const utilisateur = await this.utilisateurRepository.findOne({
       where: { email },
     });
 
     if (!utilisateur) {
-      throw new UnauthorizedException('Email ou mot de passe incorrect');
+      throw new UnauthorizedException('Invalid email or password');
     }
 
-    // Vérifier le mot de passe
+    // Verify password
     const motDePasseValide = await bcrypt.compare(mot_de_passe, utilisateur.mot_de_passe);
 
     if (!motDePasseValide) {
-      throw new UnauthorizedException('Email ou mot de passe incorrect');
+      throw new UnauthorizedException('Invalid email or password');
     }
 
-    // Générer le token JWT
+    // Generate JWT token
     const payload = { sub: utilisateur.id, email: utilisateur.email };
     const access_token = await this.jwtService.signAsync(payload);
 
@@ -95,9 +95,57 @@ export class AuthService {
     });
 
     if (!utilisateur) {
-      throw new UnauthorizedException('Utilisateur non trouvé');
+      throw new UnauthorizedException('User not found');
     }
 
     return utilisateur;
+  }
+
+  async validateOAuthUser(oauthUser: any) {
+    const { email, prenom, nom, avatar, provider, providerId } = oauthUser;
+
+    // Look for existing user with this email
+    let utilisateur = await this.utilisateurRepository.findOne({
+      where: { email },
+    });
+
+    if (!utilisateur) {
+      // Create new OAuth user
+      utilisateur = this.utilisateurRepository.create({
+        email,
+        prenom,
+        nom,
+        avatar,
+        provider,
+        provider_id: providerId,
+        mot_de_passe: null as any, // No password for OAuth
+      });
+
+      await this.utilisateurRepository.save(utilisateur);
+    } else {
+      // Update OAuth info if user exists
+      utilisateur.provider = provider;
+      utilisateur.provider_id = providerId;
+      if (avatar) utilisateur.avatar = avatar;
+      
+      await this.utilisateurRepository.save(utilisateur);
+    }
+
+    return utilisateur;
+  }
+
+  async generateJwtFromUser(utilisateur: Utilisateur) {
+    const payload = { sub: utilisateur.id, email: utilisateur.email };
+    const access_token = await this.jwtService.signAsync(payload);
+
+    return {
+      access_token,
+      utilisateur: {
+        id: utilisateur.id,
+        email: utilisateur.email,
+        prenom: utilisateur.prenom,
+        nom: utilisateur.nom,
+      },
+    };
   }
 }

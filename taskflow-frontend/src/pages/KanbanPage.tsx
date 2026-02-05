@@ -9,6 +9,7 @@ import TacheDetailModal from '../components/TacheDetailModal';
 import ProjetStats from '../components/ProjetStats';
 import TacheFilters from "../components/TacheFilters";
 import InviterMembreModal from '../components/InviterMembreModal';
+import AssigneeSelector from '../components/AssigneeSelector/AssigneeSelector';
 
 // ❌ SUPPRIMER TOUT CECI :
 // export const StatutTache = { ... }
@@ -34,6 +35,7 @@ export default function KanbanPage() {
     search: '',
     priorite: 'ALL',
     hasEcheance: false,
+    assigneA: null,
   });
 
   const [titre, setTitre] = useState('');
@@ -41,6 +43,7 @@ export default function KanbanPage() {
   const [priorite, setPriorite] = useState<PrioriteTache>(PrioriteTache.MOYENNE);
   const [statut, setStatut] = useState<StatutTache>(StatutTache.A_FAIRE);
   const [dateEcheance, setDateEcheance] = useState('');
+  const [assigneA, setAssigneA] = useState<string | null>(null);
   const [dateError, setDateError] = useState(''); 
 
   const aujourdhui = new Date().toISOString().split('T')[0];
@@ -82,13 +85,22 @@ export default function KanbanPage() {
 
     try {
       if (editingTache) {
+        const wasAssigned = editingTache.assigne_a;
+        const newAssignee = assigneA;
+        
         await tachesService.update(editingTache.id, {
           titre,
           description,
           priorite,
           statut,
           date_echeance: dateEcheance || undefined,
+          assigne_a: assigneA || undefined,
         });
+        
+        // Message de confirmation pour réassignation
+        if (wasAssigned !== newAssignee && newAssignee) {
+          alert('✅ Tâche réassignée avec succès ! Une notification a été envoyée au nouveau membre.');
+        }
       } else {
         await tachesService.create({
           titre,
@@ -97,13 +109,19 @@ export default function KanbanPage() {
           priorite,
           statut,
           date_echeance: dateEcheance || undefined,
+          assigne_a: assigneA || undefined,
         });
+        
+        // Message de confirmation pour nouvelle assignation
+        if (assigneA) {
+          alert('✅ Tâche créée et assignée avec succès ! Une notification a été envoyée au membre.');
+        }
       }
       resetForm();
       loadData();
     } catch (error) {
       console.error('Erreur lors de la sauvegarde', error);
-      alert('Une erreur est survenue');
+      alert('❌ Une erreur est survenue lors de la sauvegarde. Veuillez réessayer.');
     }
   };
 
@@ -111,6 +129,18 @@ export default function KanbanPage() {
     if (filters.search && !tache.titre.toLowerCase().includes(filters.search.toLowerCase())) return false;
     if (filters.priorite !== 'ALL' && tache.priorite !== filters.priorite) return false;
     if (filters.hasEcheance && !tache.date_echeance) return false;
+    
+    // Filtre par assignation
+    if (filters.assigneA !== null) {
+      if (filters.assigneA === 'unassigned') {
+        // Afficher seulement les tâches non assignées
+        if (tache.assigne_a) return false;
+      } else {
+        // Afficher seulement les tâches assignées à cet utilisateur
+        if (tache.assigne_a !== filters.assigneA) return false;
+      }
+    }
+    
     return true;
   });
 
@@ -121,6 +151,7 @@ export default function KanbanPage() {
     setPriorite(tache.priorite);
     setStatut(tache.statut);
     setDateEcheance(tache.date_echeance ? tache.date_echeance.split('T')[0] : '');
+    setAssigneA(tache.assigne_a || null);
     setDateError('');
     setShowModal(true);
   };
@@ -140,6 +171,7 @@ export default function KanbanPage() {
     setPriorite(PrioriteTache.MOYENNE);
     setStatut(StatutTache.A_FAIRE);
     setDateEcheance('');
+    setAssigneA(null);
     setDateError('');
     setEditingTache(null);
     setShowModal(false);
@@ -216,7 +248,7 @@ enCours={taches.filter(t => t.statut === StatutTache.EN_COURS).length}
         />
 
         {/* Filtres */}
-        <TacheFilters filters={filters} onFiltersChange={setFilters} />
+        <TacheFilters filters={filters} onFiltersChange={setFilters} projectId={projetId!} />
 
         {/* Kanban Board */}
         <DragDropContext onDragEnd={handleDragEnd}>
@@ -250,61 +282,72 @@ enCours={taches.filter(t => t.statut === StatutTache.EN_COURS).length}
           </div>
         </DragDropContext>
 
-        {/* Modal Créer/Modifier */}
+        {/* Create/Edit Modal */}
         {showModal && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-2xl p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-              <h2 className="text-2xl font-bold text-slate-900 mb-6">{editingTache ? 'Modifier la tâche' : 'Nouvelle tâche'}</h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-6">{editingTache ? 'Edit Task' : 'New Task'}</h2>
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Titre *</label>
-                  <input type="text" value={titre} onChange={e => setTitre(e.target.value)} className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none" placeholder="Ma tâche..." required />
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Title *</label>
+                  <input type="text" value={titre} onChange={e => setTitre(e.target.value)} className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none" placeholder="My task..." required />
                 </div>
 
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">Description</label>
-                  <textarea value={description} onChange={e => setDescription(e.target.value)} className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none resize-none" rows={4} placeholder="Détails de la tâche..." />
+                  <textarea value={description} onChange={e => setDescription(e.target.value)} className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none resize-none" rows={4} placeholder="Task details..." />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Priorité</label>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">Priority</label>
                     <select value={priorite} onChange={e => setPriorite(e.target.value as PrioriteTache)} className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none">
-                      <option value={PrioriteTache.BASSE}>Basse</option>
-                      <option value={PrioriteTache.MOYENNE}>Moyenne</option>
-                      <option value={PrioriteTache.HAUTE}>Haute</option>
+                      <option value={PrioriteTache.BASSE}>Low</option>
+                      <option value={PrioriteTache.MOYENNE}>Medium</option>
+                      <option value={PrioriteTache.HAUTE}>High</option>
                     </select>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Statut</label>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">Status</label>
                     <select value={statut} onChange={e => setStatut(e.target.value as StatutTache)} className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none">
-                     <option value={StatutTache.A_FAIRE}>À faire</option>
-<option value={StatutTache.EN_COURS}>En cours</option>
-<option value={StatutTache.TERMINEE}>Terminée</option>
+                     <option value={StatutTache.A_FAIRE}>To Do</option>
+<option value={StatutTache.EN_COURS}>In Progress</option>
+<option value={StatutTache.TERMINEE}>Completed</option>
                     </select>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Date d'échéance</label>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Due Date</label>
                   <input type="date" value={dateEcheance} onChange={handleDateChange} min={aujourdhui} className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none ${dateError ? 'border-red-500' : 'border-slate-200'}`} />
                   {dateError && <p className="text-red-600 text-sm mt-2 flex items-center gap-1">⚠️ {dateError}</p>}
                 </div>
 
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Assign to</label>
+                  <AssigneeSelector
+                    value={assigneA}
+                    onChange={setAssigneA}
+                    projectId={projetId!}
+                    placeholder="Select a member (optional)"
+                    allowUnassigned={true}
+                  />
+                </div>
+
                 <div className="flex gap-3 pt-4">
-                  <button type="button" onClick={resetForm} className="flex-1 px-6 py-3 border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 transition font-medium">Annuler</button>
-                  <button type="submit" className="flex-1 px-6 py-3 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition font-medium disabled:bg-slate-400 disabled:cursor-not-allowed" disabled={!!dateError}>{editingTache ? 'Modifier' : 'Créer'}</button>
+                  <button type="button" onClick={resetForm} className="flex-1 px-6 py-3 border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 transition font-medium">Cancel</button>
+                  <button type="submit" className="flex-1 px-6 py-3 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition font-medium disabled:bg-slate-400 disabled:cursor-not-allowed" disabled={!!dateError}>{editingTache ? 'Update' : 'Create'}</button>
                 </div>
               </form>
             </div>
           </div>
         )}
 
-        {/* Modal Inviter */}
-        <InviterMembreModal projetId={projetId!} isOpen={showInviteModal} onClose={() => setShowInviteModal(false)} onSuccess={() => alert('Invitation envoyée avec succès ! 📧')} />
+        {/* Invite Modal */}
+        <InviterMembreModal projetId={projetId!} isOpen={showInviteModal} onClose={() => setShowInviteModal(false)} onSuccess={() => alert('Invitation sent successfully! 📧')} />
 
-        {/* Modal Détails */}
+        {/* Details Modal */}
         {selectedTache && <TacheDetailModal tache={selectedTache} onClose={() => setSelectedTache(null)} onEdit={() => { handleEdit(selectedTache); setSelectedTache(null); }} onUpdate={loadData} />}
       </div>
     </div>

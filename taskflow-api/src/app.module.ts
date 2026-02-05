@@ -11,6 +11,8 @@ import { CommentairesModule } from './commentaires/commentaires.module';
 import { AuthModule } from './auth/auth.module';
 import { InvitationsModule } from './invitations/invitations.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { WebSocketModule } from './websocket/websocket.module';
 import { Utilisateur } from './utilisateurs/entities/utilisateur.entity';
 import { Projet } from './projets/entities/projet.entity';
 import { Tache } from './taches/entities/tache.entity';
@@ -18,6 +20,7 @@ import { MembreProjet } from './membres-projets/entities/membre-projet.entity';
 import { Etiquette } from './etiquettes/entities/etiquette.entity';
 import { Commentaire } from './commentaires/entities/commentaire.entity';
 import { Invitation } from './invitations/entities/invitation.entity';
+import { Notification } from './notifications/entities/notification.entity';
 import { getMailConfig } from './config/mail.config';
 
 @Module({
@@ -48,6 +51,7 @@ import { getMailConfig } from './config/mail.config';
               Etiquette, 
               Commentaire,
               Invitation,
+              Notification,
             ],
             synchronize: false, // ⚠️ Toujours false avec DATABASE_URL
             logging: false,
@@ -76,6 +80,7 @@ import { getMailConfig } from './config/mail.config';
             Etiquette, 
             Commentaire,
             Invitation,
+            Notification,
           ],
           synchronize: !isProduction, // true en dev, false en prod
           logging: !isProduction,
@@ -107,6 +112,8 @@ import { getMailConfig } from './config/mail.config';
     CommentairesModule,
     InvitationsModule,
     DashboardModule,
+    NotificationsModule,
+    WebSocketModule,
   ],
 })
 export class AppModule {}

@@ -1,6 +1,9 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { TranslationProvider } from './contexts/TranslationContext';
+import { WebSocketProvider } from './contexts/WebSocketContext';
 import AuthPage from './pages/AuthPage';
+import AuthCallback from './pages/AuthCallback';
 import Dashboard from './pages/Dashboard';
 import ProjetsPage from './pages/ProjetsPage';
 import KanbanPage from './pages/KanbanPage';
@@ -20,7 +23,13 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  return user ? <Layout>{children}</Layout> : <Navigate to="/auth" />;
+  return user ? (
+    <WebSocketProvider>
+      <Layout>{children}</Layout>
+    </WebSocketProvider>
+  ) : (
+    <Navigate to="/auth" />
+  );
 }
 
 function AppRoutes() {
@@ -29,6 +38,7 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/auth" element={user ? <Navigate to="/dashboard" /> : <AuthPage />} />
+      <Route path="/auth/callback" element={<AuthCallback />} />
       <Route
         path="/dashboard"
         element={
@@ -85,9 +95,11 @@ function AppRoutes() {
 function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
+      <TranslationProvider>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </TranslationProvider>
     </BrowserRouter>
   );
 }
