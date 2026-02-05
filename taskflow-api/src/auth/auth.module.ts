@@ -24,7 +24,37 @@ import { Utilisateur } from '../utilisateurs/entities/utilisateur.entity';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, GoogleStrategy, GitHubStrategy],
+  providers: [
+    AuthService, 
+    JwtStrategy,
+    // OAuth strategies are optional - only load if credentials are present
+    {
+      provide: GoogleStrategy,
+      useFactory: (configService: ConfigService, authService: AuthService) => {
+        const clientId = configService.get('GOOGLE_CLIENT_ID');
+        const clientSecret = configService.get('GOOGLE_CLIENT_SECRET');
+        
+        if (clientId && clientSecret && clientId !== 'placeholder') {
+          return new GoogleStrategy(configService, authService);
+        }
+        return null;
+      },
+      inject: [ConfigService, AuthService],
+    },
+    {
+      provide: GitHubStrategy,
+      useFactory: (configService: ConfigService, authService: AuthService) => {
+        const clientId = configService.get('GITHUB_CLIENT_ID');
+        const clientSecret = configService.get('GITHUB_CLIENT_SECRET');
+        
+        if (clientId && clientSecret && clientId !== 'placeholder') {
+          return new GitHubStrategy(configService, authService);
+        }
+        return null;
+      },
+      inject: [ConfigService, AuthService],
+    },
+  ],
   exports: [AuthService, JwtStrategy],
 })
 export class AuthModule {}
