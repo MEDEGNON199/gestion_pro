@@ -53,7 +53,7 @@ import { getMailConfig } from './config/mail.config';
               Invitation,
               Notification,
             ],
-            synchronize: false, // ⚠️ Toujours false avec DATABASE_URL
+            synchronize: true, // ✅ Temporairement true pour créer les tables
             logging: false,
             ssl: { rejectUnauthorized: false },
             extra: {
