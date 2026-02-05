@@ -7,7 +7,11 @@ async function bootstrap() {
   
   // Active CORS pour permettre les requêtes depuis le frontend
   app.enableCors({
-    origin: ['http://localhost:5173', 'http://localhost:5175'], // Ton frontend
+    origin: [
+      'http://localhost:5173', 
+      'http://localhost:5175',
+      'https://gestion-pro-1-bsdq.onrender.com' // Frontend en production
+    ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
