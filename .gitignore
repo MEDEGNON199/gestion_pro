@@ -1,9 +1,11 @@
 # Environment Variables
 .env
 .env.local
-.env.production
 .env.*.local
 *.env
+
+# Allow frontend production env (contains only public URLs)
+!taskflow-frontend/.env.production
 
 # Dependencies
 node_modules/
