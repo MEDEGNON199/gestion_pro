@@ -1,13 +1,11 @@
 import axios from 'axios';
 
-// @ts-ignore
-const API_URL = import.meta.env?.VITE_API_URL || 'http://localhost:3000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 console.log('🔧 API Configuration:', {
-  VITE_API_URL: import.meta.env?.VITE_API_URL,
+  VITE_API_URL: import.meta.env.VITE_API_URL,
   API_URL: API_URL,
   mode: import.meta.env.MODE,
-  allEnv: import.meta.env
 });
 
 const api = axios.create({
