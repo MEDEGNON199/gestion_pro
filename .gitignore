@@ -2,10 +2,12 @@
 .env
 .env.local
 .env.*.local
-*.env
 
 # Allow frontend production env (contains only public URLs)
 !taskflow-frontend/.env.production
+
+# Block all other .env files
+*.env
 
 # Dependencies
 node_modules/

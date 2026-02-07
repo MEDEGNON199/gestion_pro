@@ -54,9 +54,10 @@ export default function TacheDetailModal({ tache, onClose, onEdit, onUpdate }: T
   }, [tache.id]);
 
   const loadCommentaires = async () => {
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
     try {
       const response = await fetch(
-        `http://localhost:3000/commentaires?tache_id=${tache.id}`,
+        `${API_URL}/commentaires?tache_id=${tache.id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -74,9 +75,10 @@ export default function TacheDetailModal({ tache, onClose, onEdit, onUpdate }: T
     e.preventDefault();
     if (!nouveauCommentaire.trim()) return;
 
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
     setIsLoading(true);
     try {
-      await fetch('http://localhost:3000/commentaires', {
+      await fetch(`${API_URL}/commentaires`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

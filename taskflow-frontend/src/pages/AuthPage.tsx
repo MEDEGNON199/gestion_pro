@@ -267,7 +267,7 @@ export default function AuthPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <button
                 type="button"
-                onClick={() => window.location.href = 'http://localhost:3000/auth/google'}
+                onClick={() => window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/auth/google`}
                 className="flex items-center justify-center gap-2 py-2.5 sm:py-3 px-4 border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 text-sm font-medium transform hover:scale-[1.02] active:scale-[0.98]"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24">
@@ -280,7 +280,7 @@ export default function AuthPage() {
               </button>
               <button
                 type="button"
-                onClick={() => window.location.href = 'http://localhost:3000/auth/github'}
+                onClick={() => window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/auth/github`}
                 className="flex items-center justify-center gap-2 py-2.5 sm:py-3 px-4 border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 text-sm font-medium transform hover:scale-[1.02] active:scale-[0.98]"
               >
                 <Github className="w-4 h-4" />

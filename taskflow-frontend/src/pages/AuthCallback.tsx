@@ -18,8 +18,10 @@ export default function AuthCallback() {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
         
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+        
         // Récupérer les infos complètes de l'utilisateur
-        fetch('http://localhost:3000/auth/profile', {
+        fetch(`${API_URL}/auth/profile`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
