@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException, Inject, forwardRef } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { Utilisateur } from '../utilisateurs/entities/utilisateur.entity';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +14,8 @@ export class AuthService {
     @InjectRepository(Utilisateur)
     private utilisateurRepository: Repository<Utilisateur>,
     private jwtService: JwtService,
+    @Inject(forwardRef(() => AuditService))
+    private auditService: AuditService,
   ) {}
 
   async register(registerDto: RegisterDto) {
@@ -40,6 +43,14 @@ export class AuthService {
 
     await this.utilisateurRepository.save(nouvelUtilisateur);
 
+    // 📝 LOG: Inscription
+    await this.auditService.log({
+      utilisateurId: nouvelUtilisateur.id,
+      action: 'USER_REGISTER',
+      details: { email, prenom, nom },
+      status: 'success',
+    });
+
     // Generate JWT token
     const payload = { sub: nouvelUtilisateur.id, email: nouvelUtilisateur.email };
     const access_token = await this.jwtService.signAsync(payload);
@@ -64,6 +75,8 @@ export class AuthService {
     });
 
     if (!utilisateur) {
+      // 📝 LOG: Tentative de connexion échouée
+      console.log('❌ LOGIN FAILED: User not found -', email);
       throw new UnauthorizedException('Invalid email or password');
     }
 
@@ -71,8 +84,23 @@ export class AuthService {
     const motDePasseValide = await bcrypt.compare(mot_de_passe, utilisateur.mot_de_passe);
 
     if (!motDePasseValide) {
+      // 📝 LOG: Tentative de connexion échouée
+      await this.auditService.log({
+        utilisateurId: utilisateur.id,
+        action: 'USER_LOGIN_FAILED',
+        details: { email, reason: 'Invalid password' },
+        status: 'failed',
+      });
       throw new UnauthorizedException('Invalid email or password');
     }
+
+    // 📝 LOG: Connexion réussie
+    await this.auditService.log({
+      utilisateurId: utilisateur.id,
+      action: 'USER_LOGIN',
+      details: { email },
+      status: 'success',
+    });
 
     // Generate JWT token
     const payload = { sub: utilisateur.id, email: utilisateur.email };

@@ -5,7 +5,7 @@ import { Invitation, StatutInvitation } from './entities/invitation.entity';
 import { Projet } from '../projets/entities/projet.entity';
 import { Utilisateur } from '../utilisateurs/entities/utilisateur.entity';
 import { MembreProjet } from '../membres-projets/entities/membre-projet.entity';
-import { MailerService } from '@nestjs-modules/mailer';
+import { BrevoService } from '../mail/brevo.service';
 import { ConfigService } from '@nestjs/config';
 import { NotificationsService } from '../notifications/notifications.service';
 import { TypeNotification } from '../notifications/entities/notification.entity';
@@ -22,7 +22,7 @@ export class InvitationsService {
     private utilisateurRepository: Repository<Utilisateur>,
     @InjectRepository(MembreProjet)
     private membreProjetRepository: Repository<MembreProjet>,
-    private mailerService: MailerService,
+    private brevoService: BrevoService,
     private configService: ConfigService,
     @Inject(forwardRef(() => NotificationsService))
     private notificationsService: NotificationsService,
@@ -116,32 +116,17 @@ export class InvitationsService {
       );
     }
 
-    // Envoyer l'email
+    // Envoyer l'email via Brevo
     const frontendUrl = this.configService.get('FRONTEND_URL');
     const invitationUrl = `${frontendUrl}/invitations/${invitation.token}`;
 
-    await this.mailerService.sendMail({
-      to: email,
-      subject: isNewInvitation 
-        ? `Invitation au projet ${projet.nom}` 
-        : `Rappel: Invitation au projet ${projet.nom}`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #1e293b;">${isNewInvitation ? 'Invitation à rejoindre un projet' : 'Rappel d\'invitation'}</h2>
-          <p>Bonjour,</p>
-          <p><strong>${utilisateur.prenom} ${utilisateur.nom}</strong> vous ${isNewInvitation ? 'a invité' : 'vous rappelle son invitation'} à rejoindre le projet <strong>${projet.nom}</strong> sur TaskFlow.</p>
-          <p>Vous avez été invité en tant que <strong>${role}</strong>.</p>
-          <div style="margin: 30px 0;">
-            <a href="${invitationUrl}" 
-               style="background-color: #1e293b; color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; display: inline-block;">
-              Accepter l'invitation
-            </a>
-          </div>
-          <p style="color: #666; font-size: 14px;">Cette invitation expire dans 7 jours.</p>
-          <p style="color: #666; font-size: 14px;">Si vous n'avez pas de compte, vous pourrez en créer un en cliquant sur le lien.</p>
-        </div>
-      `,
-    });
+    await this.brevoService.sendInvitationEmail(
+      email,
+      `${utilisateur.prenom} ${utilisateur.nom}`,
+      projet.nom,
+      invitationUrl,
+      isNewInvitation,
+    );
 
     return {
       message: isNewInvitation 

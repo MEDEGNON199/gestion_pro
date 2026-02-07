@@ -13,6 +13,7 @@ import { InvitationsModule } from './invitations/invitations.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { WebSocketModule } from './websocket/websocket.module';
+import { AuditModule } from './audit/audit.module';
 import { Utilisateur } from './utilisateurs/entities/utilisateur.entity';
 import { Projet } from './projets/entities/projet.entity';
 import { Tache } from './taches/entities/tache.entity';
@@ -21,6 +22,7 @@ import { Etiquette } from './etiquettes/entities/etiquette.entity';
 import { Commentaire } from './commentaires/entities/commentaire.entity';
 import { Invitation } from './invitations/entities/invitation.entity';
 import { Notification } from './notifications/entities/notification.entity';
+import { AuditLog } from './audit/entities/audit-log.entity';
 import { getMailConfig } from './config/mail.config';
 
 @Module({
@@ -47,11 +49,12 @@ import { getMailConfig } from './config/mail.config';
               Utilisateur, 
               Projet, 
               Tache, 
-              MembreProjet, 
+              MembreProjet,
               Etiquette, 
               Commentaire,
               Invitation,
               Notification,
+              AuditLog,
             ],
             synchronize: true, // ✅ Temporairement true pour créer les tables
             logging: false,
@@ -81,6 +84,7 @@ import { getMailConfig } from './config/mail.config';
             Commentaire,
             Invitation,
             Notification,
+            AuditLog,
           ],
           synchronize: !isProduction, // true en dev, false en prod
           logging: !isProduction,
@@ -104,6 +108,7 @@ import { getMailConfig } from './config/mail.config';
 
     // Modules applicatifs
     AuthModule,
+    AuditModule,
     UtilisateursModule,
     ProjetsModule,
     TachesModule,
