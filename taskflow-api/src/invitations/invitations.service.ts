@@ -120,13 +120,18 @@ export class InvitationsService {
     const frontendUrl = this.configService.get('FRONTEND_URL');
     const invitationUrl = `${frontendUrl}/invitations/${invitation.token}`;
 
-    await this.brevoService.sendInvitationEmail(
-      email,
-      `${utilisateur.prenom} ${utilisateur.nom}`,
-      projet.nom,
-      invitationUrl,
-      isNewInvitation,
-    );
+    try {
+      await this.brevoService.sendInvitationEmail(
+        email,
+        `${utilisateur.prenom} ${utilisateur.nom}`,
+        projet.nom,
+        invitationUrl,
+        isNewInvitation,
+      );
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'envoi de l\'email d\'invitation:', error);
+      // Ne pas bloquer l'invitation si l'email échoue
+    }
 
     return {
       message: isNewInvitation 
