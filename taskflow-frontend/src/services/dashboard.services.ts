@@ -1,6 +1,4 @@
-import axios from 'axios';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+import api from './api';
 
 export interface DashboardStats {
   projetsActifs: number;
@@ -24,10 +22,7 @@ export interface DashboardStats {
 export const dashboardService = {
   // Récupérer toutes les stats du dashboard
   getStats: async (): Promise<DashboardStats> => {
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`${API_URL}/dashboard/stats`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await api.get('/dashboard/stats');
     return response.data;
   },
 };
