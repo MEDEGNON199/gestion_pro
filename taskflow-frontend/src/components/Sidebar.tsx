@@ -2,11 +2,24 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { LayoutDashboard, FolderKanban, Settings, LogOut, Layers, Mail, Star, Zap, Crown, ChevronRight, Sparkles } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import Avatar from './Avatar';
+import { useRef } from 'react';
+import { useTouchGestures } from '../hooks/useTouchGestures';
 
-export default function Sidebar() {
+interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const sidebarRef = useRef<HTMLElement>(null);
+
+  // Add swipe-to-close gesture
+  useTouchGestures(sidebarRef, {
+    onSwipeLeft: onClose,
+  });
 
   if (!user) return null;
 
@@ -33,8 +46,29 @@ export default function Sidebar() {
     },
   ];
 
+  const handleNavigate = (path: string) => {
+    navigate(path);
+    onClose(); // Close menu on navigation (mobile)
+  };
+
   return (
-    <aside className="w-72 bg-white/80 backdrop-blur-xl border-r border-white/20 h-screen sticky top-0 flex flex-col shadow-xl relative overflow-hidden">
+    <aside 
+      ref={sidebarRef}
+      id="mobile-sidebar"
+      role="navigation"
+      aria-label="Main navigation"
+      className={`
+        fixed top-0 left-0 h-screen z-sidebar
+        w-[80%] max-w-[280px]
+        lg:w-72 lg:sticky
+        bg-white/80 backdrop-blur-xl border-r border-white/20 shadow-xl
+        transform transition-transform duration-300 ease-in-out
+        ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        flex flex-col
+        overflow-hidden
+        relative
+      `}
+    >
       {/* Background Decoration */}
       <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full -translate-y-16 translate-x-16"></div>
       <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-indigo-500/10 to-blue-500/10 rounded-full translate-y-12 -translate-x-12"></div>
@@ -89,8 +123,8 @@ export default function Sidebar() {
               style={{ animationDelay: `${index * 50}ms` }}
             >
               <button
-                onClick={() => navigate(item.path)}
-                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 font-semibold text-sm relative overflow-hidden group ${
+                onClick={() => handleNavigate(item.path)}
+                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 font-semibold text-sm relative overflow-hidden group min-h-touch ${
                   isActive
                     ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg hover:shadow-xl transform hover:scale-[1.02]'
                     : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 hover:shadow-md hover:scale-[1.02]'

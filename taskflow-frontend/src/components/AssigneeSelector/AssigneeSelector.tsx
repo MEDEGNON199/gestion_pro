@@ -129,7 +129,7 @@ export default function AssigneeSelector({
         onClick={handleToggleDropdown}
         disabled={disabled}
         className={`
-          w-full px-4 py-2.5 bg-white border border-slate-200 rounded-lg 
+          w-full px-4 py-2.5 min-h-touch bg-white border border-slate-200 rounded-lg 
           focus:ring-2 focus:ring-blue-500 focus:border-transparent 
           outline-none transition text-left flex items-center justify-between
           ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:border-slate-300'}
@@ -166,7 +166,7 @@ export default function AssigneeSelector({
 
       {/* Dropdown */}
       {state.isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-50 max-h-64 overflow-hidden">
+        <div className="absolute top-full left-0 right-0 sm:left-0 sm:right-auto sm:w-80 w-[90vw] left-[5vw] sm:left-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-50 max-h-64 overflow-hidden">
           {/* Champ de recherche */}
           <div className="p-3 border-b border-slate-200">
             <div className="relative">
@@ -177,7 +177,7 @@ export default function AssigneeSelector({
                 value={state.searchTerm}
                 onChange={handleSearchChange}
                 placeholder="Rechercher un membre..."
-                className="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                className="w-full pl-9 pr-4 py-2 min-h-touch text-sm sm:text-base border border-slate-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
               />
             </div>
           </div>
@@ -200,11 +200,11 @@ export default function AssigneeSelector({
                     type="button"
                     onClick={() => handleSelectMember(null)}
                     className={`
-                      w-full px-4 py-3 text-left hover:bg-slate-50 flex items-center gap-3
+                      w-full px-4 py-3 min-h-touch text-left hover:bg-slate-50 flex items-center gap-3
                       ${!value ? 'bg-blue-50 text-blue-700' : 'text-slate-700'}
                     `}
                   >
-                    <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-slate-100 flex items-center justify-center">
                       <X className="w-4 h-4 text-slate-400" />
                     </div>
                     <span className="text-sm">Non assigné</span>
@@ -223,7 +223,7 @@ export default function AssigneeSelector({
                       type="button"
                       onClick={() => handleSelectMember(member)}
                       className={`
-                        w-full px-4 py-3 text-left hover:bg-slate-50 flex items-center gap-3
+                        w-full px-4 py-3 min-h-touch text-left hover:bg-slate-50 flex items-center gap-3
                         ${value === member.utilisateur_id ? 'bg-blue-50 text-blue-700' : 'text-slate-700'}
                       `}
                     >

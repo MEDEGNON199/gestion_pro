@@ -70,11 +70,11 @@ export default function FilterByAssignee({ value, onChange, projectId }: FilterB
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-lg hover:border-slate-300 transition text-sm"
+        className="flex items-center gap-2 px-3 py-2 min-h-touch w-full sm:w-auto bg-white border border-slate-200 rounded-lg hover:border-slate-300 transition text-sm"
       >
         {getDisplayIcon()}
-        <span className="text-slate-700">{getDisplayText()}</span>
-        <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <span className="text-slate-700 truncate flex-1 text-left">{getDisplayText()}</span>
+        <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
@@ -83,7 +83,7 @@ export default function FilterByAssignee({ value, onChange, projectId }: FilterB
             className="fixed inset-0 z-10" 
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute top-full left-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-20 min-w-[200px]">
+          <div className="absolute top-full left-0 sm:left-0 w-[90vw] left-[5vw] sm:left-0 sm:w-auto mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-20 min-w-[200px] max-h-[60vh] overflow-y-auto">
             {isLoading ? (
               <div className="px-4 py-3 text-sm text-slate-500 text-center">
                 Chargement...
@@ -94,11 +94,11 @@ export default function FilterByAssignee({ value, onChange, projectId }: FilterB
                 <button
                   onClick={() => handleFilterChange(null)}
                   className={`
-                    w-full px-4 py-3 text-left hover:bg-slate-50 flex items-center gap-3 text-sm
+                    w-full px-4 py-3 min-h-touch text-left hover:bg-slate-50 flex items-center gap-3 text-sm
                     ${!value ? 'bg-blue-50 text-blue-700' : 'text-slate-700'}
                   `}
                 >
-                  <Users className="w-4 h-4" />
+                  <Users className="w-4 h-4 flex-shrink-0" />
                   <span>Tous les assignés</span>
                 </button>
 
@@ -106,11 +106,11 @@ export default function FilterByAssignee({ value, onChange, projectId }: FilterB
                 <button
                   onClick={() => handleFilterChange('unassigned')}
                   className={`
-                    w-full px-4 py-3 text-left hover:bg-slate-50 flex items-center gap-3 text-sm
+                    w-full px-4 py-3 min-h-touch text-left hover:bg-slate-50 flex items-center gap-3 text-sm
                     ${value === 'unassigned' ? 'bg-blue-50 text-blue-700' : 'text-slate-700'}
                   `}
                 >
-                  <UserX className="w-4 h-4" />
+                  <UserX className="w-4 h-4 flex-shrink-0" />
                   <span>Non assignées</span>
                 </button>
 
@@ -125,7 +125,7 @@ export default function FilterByAssignee({ value, onChange, projectId }: FilterB
                     key={member.id}
                     onClick={() => handleFilterChange(member.utilisateur_id)}
                     className={`
-                      w-full px-4 py-3 text-left hover:bg-slate-50 flex items-center gap-3 text-sm
+                      w-full px-4 py-3 min-h-touch text-left hover:bg-slate-50 flex items-center gap-3 text-sm
                       ${value === member.utilisateur_id ? 'bg-blue-50 text-blue-700' : 'text-slate-700'}
                     `}
                   >
@@ -140,12 +140,12 @@ export default function FilterByAssignee({ value, onChange, projectId }: FilterB
                       </div>
                     </div>
                     {member.role === 'PROPRIETAIRE' && (
-                      <span className="text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">
+                      <span className="text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded flex-shrink-0">
                         Propriétaire
                       </span>
                     )}
                     {member.role === 'ADMIN' && (
-                      <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">
+                      <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded flex-shrink-0">
                         Admin
                       </span>
                     )}

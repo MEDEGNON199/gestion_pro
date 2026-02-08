@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { X, MessageSquare, Send, User, UserCheck } from 'lucide-react';
+import { MessageSquare, Send, User, UserCheck } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import Avatar from './Avatar';
 import AssigneeSelector from './AssigneeSelector/AssigneeSelector';
 import { tachesService } from '../services/taches.service';
+import ResponsiveModal from './ResponsiveModal';
 
 interface Tache {
   id: string;
@@ -120,27 +121,18 @@ export default function TacheDetailModal({ tache, onClose, onEdit, onUpdate }: T
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
-        {/* Header */}
-        <div className="p-6 border-b border-gray-200 flex items-start justify-between">
-          <div className="flex-1">
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">{tache.titre}</h2>
-            {tache.description && (
-              <p className="text-gray-600">{tache.description}</p>
-            )}
-          </div>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-100 rounded-lg transition"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+    <ResponsiveModal isOpen={true} onClose={onClose} size="xl">
+      {/* Header with title and description */}
+      <div className="p-4 sm:p-6 border-b border-gray-200">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">{tache.titre}</h2>
+        {tache.description && (
+          <p className="text-sm sm:text-base text-gray-600">{tache.description}</p>
+        )}
+      </div>
 
         {/* Infos */}
-        <div className="p-6 border-b border-gray-200">
-          <div className="grid grid-cols-2 gap-6">
+        <div className="p-4 sm:p-6 border-b border-gray-200">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div className="space-y-4">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Statut</p>
@@ -242,7 +234,7 @@ export default function TacheDetailModal({ tache, onClose, onEdit, onUpdate }: T
         </div>
 
         {/* Commentaires */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6">
           <div className="flex items-center gap-2 mb-4">
             <MessageSquare className="w-5 h-5 text-gray-600" />
             <h3 className="font-semibold text-gray-900">
@@ -285,44 +277,46 @@ export default function TacheDetailModal({ tache, onClose, onEdit, onUpdate }: T
           </div>
 
           {/* Formulaire nouveau commentaire */}
-          <form onSubmit={handleSubmitCommentaire} className="flex gap-3">
-            {user && <Avatar prenom={user.prenom} nom={user.nom} size="sm" />}
-            <div className="flex-1 flex gap-2">
+          <form onSubmit={handleSubmitCommentaire} className="flex gap-2 sm:gap-3">
+            <div className="hidden sm:block">
+              {user && <Avatar prenom={user.prenom} nom={user.nom} size="sm" />}
+            </div>
+            <div className="flex-1 flex flex-col sm:flex-row gap-2">
               <input
                 type="text"
                 value={nouveauCommentaire}
                 onChange={(e) => setNouveauCommentaire(e.target.value)}
-                placeholder="Add a comment..."
-                className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent outline-none"
+                placeholder="Ajouter un commentaire..."
+                className="flex-1 min-h-touch px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent outline-none text-base"
                 disabled={isLoading}
               />
               <button
                 type="submit"
                 disabled={isLoading || !nouveauCommentaire.trim()}
-                className="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="min-h-touch w-full sm:w-auto px-6 py-3 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 <Send className="w-5 h-5" />
+                <span className="sm:hidden">Envoyer</span>
               </button>
             </div>
           </form>
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-gray-200 flex gap-3">
+        <div className="p-4 sm:p-6 border-t border-gray-200 flex flex-col sm:flex-row gap-3">
           <button
             onClick={onEdit}
-            className="flex-1 px-6 py-3 bg-violet-600 text-white rounded-xl hover:bg-violet-700 transition"
+            className="w-full sm:flex-1 min-h-touch px-6 py-3 bg-violet-600 text-white rounded-xl hover:bg-violet-700 transition font-medium"
           >
             Modifier
           </button>
           <button
             onClick={onClose}
-            className="px-6 py-3 border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition"
+            className="w-full sm:w-auto min-h-touch px-6 py-3 border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition font-medium"
           >
             Fermer
           </button>
         </div>
-      </div>
-    </div>
+    </ResponsiveModal>
   );
 }

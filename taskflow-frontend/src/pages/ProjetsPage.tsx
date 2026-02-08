@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Search, Folder, Zap, Archive } from 'lucide-react';
 import { projetsService } from '../services/projets.service';
 import ProjetCard from '../components/ProjetCard';
+import ResponsiveModal from '../components/ResponsiveModal';
 
 interface Projet {
   id: string;
@@ -209,65 +210,66 @@ export default function ProjectsPage() {
         )}
 
         {/* Modal Create / Edit */}
-        {showModal && (
-          <div className="fixed inset-0 bg-black/30 backdrop-blur-md flex items-center justify-center z-50">
-            <div className="w-full max-w-lg bg-white rounded-2xl p-6 shadow-lg">
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
-                {editingProject ? 'Edit Project' : 'New Project'}
-              </h2>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-slate-700 font-semibold mb-1">Name *</label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                    required
-                  />
+        <ResponsiveModal
+          isOpen={showModal}
+          onClose={resetForm}
+          title={editingProject ? 'Modifier le projet' : 'Nouveau projet'}
+          size="md"
+        >
+          <div className="p-4 sm:p-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-slate-700 font-semibold mb-2">Nom *</label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full min-h-touch px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-base"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-slate-700 font-semibold mb-2">Description</label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="w-full min-h-[88px] px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-base"
+                  rows={3}
+                />
+              </div>
+              <div>
+                <label className="block text-slate-700 font-semibold mb-2">Couleur</label>
+                <div className="flex flex-wrap gap-3">
+                  {colors.map(c => (
+                    <button
+                      key={c.value}
+                      type="button"
+                      onClick={() => setColor(c.value)}
+                      className={`min-w-touch min-h-touch w-12 h-12 rounded-full transition ${color === c.value ? 'ring-4 ring-slate-900 ring-offset-2' : 'ring-2 ring-slate-200'}`}
+                      style={{ background: c.value }}
+                      aria-label={`Couleur ${c.value}`}
+                    />
+                  ))}
                 </div>
-                <div>
-                  <label className="block text-slate-700 font-semibold mb-1">Description</label>
-                  <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                    rows={3}
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-700 font-semibold mb-2">Color</label>
-                  <div className="flex flex-wrap gap-2">
-                    {colors.map(c => (
-                      <button
-                        key={c.value}
-                        type="button"
-                        onClick={() => setColor(c.value)}
-                        className={`w-10 h-10 rounded-full ${color === c.value ? 'ring-2 ring-slate-900' : ''}`}
-                        style={{ background: c.value }}
-                      />
-                    ))}
-                  </div>
-                </div>
-                <div className="flex gap-2 mt-4">
-                  <button
-                    type="button"
-                    onClick={resetForm}
-                    className="flex-1 px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-100"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                  >
-                    {editingProject ? 'Update' : 'Create'}
-                  </button>
-                </div>
-              </form>
-            </div>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  className="w-full sm:flex-1 min-h-touch px-6 py-3 border border-slate-300 rounded-lg hover:bg-slate-100 font-medium transition"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  className="w-full sm:flex-1 min-h-touch px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition"
+                >
+                  {editingProject ? 'Mettre à jour' : 'Créer'}
+                </button>
+              </div>
+            </form>
           </div>
-        )}
+        </ResponsiveModal>
       </div>
 
       <style>{`

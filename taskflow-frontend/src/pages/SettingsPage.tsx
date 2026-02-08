@@ -300,36 +300,36 @@ export default function SettingsPage() {
                 </div>
 
                 {/* Profile Form */}
-                <form onSubmit={handleUpdateProfile} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <form onSubmit={handleUpdateProfile} className="space-y-4 sm:space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-3">First Name</label>
+                      <label className="block text-sm font-bold text-slate-700 mb-2 sm:mb-3">First Name</label>
                       <input 
                         type="text" 
                         value={firstName} 
                         onChange={e => setFirstName(e.target.value)} 
-                        className="w-full px-4 py-4 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none text-slate-900 font-medium hover:border-slate-300 transition-colors" 
+                        className="w-full min-h-touch px-4 py-3 sm:py-4 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none text-slate-900 font-medium hover:border-slate-300 transition-colors text-base" 
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-3">Last Name</label>
+                      <label className="block text-sm font-bold text-slate-700 mb-2 sm:mb-3">Last Name</label>
                       <input 
                         type="text" 
                         value={lastName} 
                         onChange={e => setLastName(e.target.value)} 
-                        className="w-full px-4 py-4 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none text-slate-900 font-medium hover:border-slate-300 transition-colors" 
+                        className="w-full min-h-touch px-4 py-3 sm:py-4 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none text-slate-900 font-medium hover:border-slate-300 transition-colors text-base" 
                         required
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-3">Email Address</label>
+                    <label className="block text-sm font-bold text-slate-700 mb-2 sm:mb-3">Email Address</label>
                     <input 
                       type="email" 
                       value={email} 
                       onChange={e => setEmail(e.target.value)} 
-                      className="w-full px-4 py-4 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none text-slate-900 font-medium hover:border-slate-300 transition-colors" 
+                      className="w-full min-h-touch px-4 py-3 sm:py-4 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none text-slate-900 font-medium hover:border-slate-300 transition-colors text-base" 
                       required
                     />
                   </div>
@@ -337,7 +337,7 @@ export default function SettingsPage() {
                   <button 
                     type="submit" 
                     disabled={isLoading} 
-                    className="w-full px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-bold hover:shadow-xl hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full min-h-touch px-6 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-bold hover:shadow-xl hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isLoading ? 'Saving Changes...' : 'Save Changes'}
                   </button>
@@ -397,21 +397,21 @@ export default function SettingsPage() {
                 )}
 
                 {/* Password Form */}
-                <form onSubmit={handleChangePassword} className="space-y-6">
+                <form onSubmit={handleChangePassword} className="space-y-4 sm:space-y-6">
                   <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-3">Current Password</label>
+                    <label className="block text-sm font-bold text-slate-700 mb-2 sm:mb-3">Current Password</label>
                     <div className="relative">
                       <input 
                         type={showPassword.current ? 'text' : 'password'} 
                         value={currentPassword} 
                         onChange={e=>setCurrentPassword(e.target.value)} 
-                        className="w-full px-4 py-4 pr-12 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none text-slate-900 font-medium hover:border-slate-300 transition-colors"
+                        className="w-full min-h-touch px-4 py-3 sm:py-4 pr-12 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none text-slate-900 font-medium hover:border-slate-300 transition-colors text-base"
                         required
                       />
                       <button 
                         type="button" 
                         onClick={()=>setShowPassword(p=>({...p,current:!p.current}))} 
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition-colors"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition-colors min-w-touch min-h-touch flex items-center justify-center"
                       >
                         {showPassword.current ? <EyeOff className="w-5 h-5"/> : <Eye className="w-5 h-5"/>}
                       </button>
@@ -419,19 +419,19 @@ export default function SettingsPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-3">New Password</label>
+                    <label className="block text-sm font-bold text-slate-700 mb-2 sm:mb-3">New Password</label>
                     <div className="relative">
                       <input 
                         type={showPassword.new ? 'text' : 'password'} 
                         value={newPassword} 
                         onChange={e=>{setNewPassword(e.target.value); calculatePasswordStrength(e.target.value)}} 
-                        className="w-full px-4 py-4 pr-12 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none text-slate-900 font-medium hover:border-slate-300 transition-colors"
+                        className="w-full min-h-touch px-4 py-3 sm:py-4 pr-12 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none text-slate-900 font-medium hover:border-slate-300 transition-colors text-base"
                         required
                       />
                       <button 
                         type="button" 
                         onClick={()=>setShowPassword(p=>({...p,new:!p.new}))} 
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition-colors"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition-colors min-w-touch min-h-touch flex items-center justify-center"
                       >
                         {showPassword.new ? <EyeOff className="w-5 h-5"/> : <Eye className="w-5 h-5"/>}
                       </button>
@@ -451,19 +451,19 @@ export default function SettingsPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-3">Confirm New Password</label>
+                    <label className="block text-sm font-bold text-slate-700 mb-2 sm:mb-3">Confirm New Password</label>
                     <div className="relative">
                       <input 
                         type={showPassword.confirm ? 'text' : 'password'} 
                         value={confirmPassword} 
                         onChange={e=>setConfirmPassword(e.target.value)} 
-                        className="w-full px-4 py-4 pr-12 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none text-slate-900 font-medium hover:border-slate-300 transition-colors"
+                        className="w-full min-h-touch px-4 py-3 sm:py-4 pr-12 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none text-slate-900 font-medium hover:border-slate-300 transition-colors text-base"
                         required
                       />
                       <button 
                         type="button" 
                         onClick={()=>setShowPassword(p=>({...p,confirm:!p.confirm}))} 
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition-colors"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition-colors min-w-touch min-h-touch flex items-center justify-center"
                       >
                         {showPassword.confirm ? <EyeOff className="w-5 h-5"/> : <Eye className="w-5 h-5"/>}
                       </button>
@@ -473,7 +473,7 @@ export default function SettingsPage() {
                   <button 
                     type="submit" 
                     disabled={isLoading} 
-                    className="w-full px-6 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl font-bold hover:shadow-xl hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full min-h-touch px-6 py-3 sm:py-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl font-bold hover:shadow-xl hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isLoading?'Changing Password...':'Change Password'}
                   </button>

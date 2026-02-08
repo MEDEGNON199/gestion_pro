@@ -6,6 +6,7 @@ import { tachesService, StatutTache, PrioriteTache, Tache } from '../services/ta
 import { projetsService } from '../services/projets.service';
 import TacheCard from '../components/TacheCard';
 import TacheDetailModal from '../components/TacheDetailModal';
+import ResponsiveModal from '../components/ResponsiveModal';
 import ProjetStats from '../components/ProjetStats';
 import TacheFilters from "../components/TacheFilters";
 import InviterMembreModal from '../components/InviterMembreModal';
@@ -283,66 +284,107 @@ enCours={taches.filter(t => t.statut === StatutTache.EN_COURS).length}
         </DragDropContext>
 
         {/* Create/Edit Modal */}
-        {showModal && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-              <h2 className="text-2xl font-bold text-slate-900 mb-6">{editingTache ? 'Edit Task' : 'New Task'}</h2>
-              <form onSubmit={handleSubmit} className="space-y-5">
+        <ResponsiveModal
+          isOpen={showModal}
+          onClose={resetForm}
+          title={editingTache ? 'Edit Task' : 'New Task'}
+          size="md"
+        >
+          <div className="p-4 sm:p-6">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">Title *</label>
+                <input 
+                  type="text" 
+                  value={titre} 
+                  onChange={e => setTitre(e.target.value)} 
+                  className="w-full min-h-touch px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none text-base" 
+                  placeholder="My task..." 
+                  required 
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">Description</label>
+                <textarea 
+                  value={description} 
+                  onChange={e => setDescription(e.target.value)} 
+                  className="w-full min-h-[88px] px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none resize-none text-base" 
+                  rows={4} 
+                  placeholder="Task details..." 
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Title *</label>
-                  <input type="text" value={titre} onChange={e => setTitre(e.target.value)} className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none" placeholder="My task..." required />
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Priority</label>
+                  <select 
+                    value={priorite} 
+                    onChange={e => setPriorite(e.target.value as PrioriteTache)} 
+                    className="w-full min-h-touch px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none text-base"
+                  >
+                    <option value={PrioriteTache.BASSE}>Low</option>
+                    <option value={PrioriteTache.MOYENNE}>Medium</option>
+                    <option value={PrioriteTache.HAUTE}>High</option>
+                  </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Description</label>
-                  <textarea value={description} onChange={e => setDescription(e.target.value)} className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none resize-none" rows={4} placeholder="Task details..." />
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Status</label>
+                  <select 
+                    value={statut} 
+                    onChange={e => setStatut(e.target.value as StatutTache)} 
+                    className="w-full min-h-touch px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none text-base"
+                  >
+                    <option value={StatutTache.A_FAIRE}>To Do</option>
+                    <option value={StatutTache.EN_COURS}>In Progress</option>
+                    <option value={StatutTache.TERMINEE}>Completed</option>
+                  </select>
                 </div>
+              </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Priority</label>
-                    <select value={priorite} onChange={e => setPriorite(e.target.value as PrioriteTache)} className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none">
-                      <option value={PrioriteTache.BASSE}>Low</option>
-                      <option value={PrioriteTache.MOYENNE}>Medium</option>
-                      <option value={PrioriteTache.HAUTE}>High</option>
-                    </select>
-                  </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">Due Date</label>
+                <input 
+                  type="date" 
+                  value={dateEcheance} 
+                  onChange={handleDateChange} 
+                  min={aujourdhui} 
+                  className={`w-full min-h-touch px-4 py-3 border rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none text-base ${dateError ? 'border-red-500' : 'border-slate-200'}`} 
+                />
+                {dateError && <p className="text-red-600 text-sm mt-2 flex items-center gap-1">⚠️ {dateError}</p>}
+              </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Status</label>
-                    <select value={statut} onChange={e => setStatut(e.target.value as StatutTache)} className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none">
-                     <option value={StatutTache.A_FAIRE}>To Do</option>
-<option value={StatutTache.EN_COURS}>In Progress</option>
-<option value={StatutTache.TERMINEE}>Completed</option>
-                    </select>
-                  </div>
-                </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">Assign to</label>
+                <AssigneeSelector
+                  value={assigneA}
+                  onChange={setAssigneA}
+                  projectId={projetId!}
+                  placeholder="Select a member (optional)"
+                  allowUnassigned={true}
+                />
+              </div>
 
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Due Date</label>
-                  <input type="date" value={dateEcheance} onChange={handleDateChange} min={aujourdhui} className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none ${dateError ? 'border-red-500' : 'border-slate-200'}`} />
-                  {dateError && <p className="text-red-600 text-sm mt-2 flex items-center gap-1">⚠️ {dateError}</p>}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Assign to</label>
-                  <AssigneeSelector
-                    value={assigneA}
-                    onChange={setAssigneA}
-                    projectId={projetId!}
-                    placeholder="Select a member (optional)"
-                    allowUnassigned={true}
-                  />
-                </div>
-
-                <div className="flex gap-3 pt-4">
-                  <button type="button" onClick={resetForm} className="flex-1 px-6 py-3 border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 transition font-medium">Cancel</button>
-                  <button type="submit" className="flex-1 px-6 py-3 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition font-medium disabled:bg-slate-400 disabled:cursor-not-allowed" disabled={!!dateError}>{editingTache ? 'Update' : 'Create'}</button>
-                </div>
-              </form>
-            </div>
+              <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                <button 
+                  type="button" 
+                  onClick={resetForm} 
+                  className="w-full sm:flex-1 min-h-touch px-6 py-3 border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 transition font-medium"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  className="w-full sm:flex-1 min-h-touch px-6 py-3 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition font-medium disabled:bg-slate-400 disabled:cursor-not-allowed" 
+                  disabled={!!dateError}
+                >
+                  {editingTache ? 'Update' : 'Create'}
+                </button>
+              </div>
+            </form>
           </div>
-        )}
+        </ResponsiveModal>
 
         {/* Invite Modal */}
         <InviterMembreModal projetId={projetId!} isOpen={showInviteModal} onClose={() => setShowInviteModal(false)} onSuccess={() => alert('Invitation sent successfully! 📧')} />
