@@ -37,8 +37,13 @@ export class AuthController {
   // Google OAuth routes
   @Get('google')
   @UseGuards(AuthGuard('google'))
-  async googleAuth() {
-    // Initiates Google OAuth flow
+  async googleAuth(@Req() req: any, @Res() res: Response) {
+    // Store invitation token in session if present
+    const invitation = req.query.invitation;
+    if (invitation) {
+      req.session = req.session || {};
+      req.session.invitation = invitation;
+    }
   }
 
   @Get('google/callback')
@@ -46,16 +51,33 @@ export class AuthController {
   async googleAuthCallback(@Req() req: any, @Res() res: Response) {
     const tokenData = await this.authService.generateJwtFromUser(req.user);
     
-    // Redirect to frontend with token
+    // Retrieve invitation token from session if present
+    const invitation = req.session?.invitation;
+    
+    // Redirect to frontend with token and invitation if present
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-    res.redirect(`${frontendUrl}/auth/callback?token=${tokenData.access_token}`);
+    const redirectUrl = invitation 
+      ? `${frontendUrl}/auth/callback?token=${tokenData.access_token}&invitation=${invitation}`
+      : `${frontendUrl}/auth/callback?token=${tokenData.access_token}`;
+    
+    // Clear invitation from session
+    if (req.session?.invitation) {
+      delete req.session.invitation;
+    }
+    
+    res.redirect(redirectUrl);
   }
 
   // GitHub OAuth routes
   @Get('github')
   @UseGuards(AuthGuard('github'))
-  async githubAuth() {
-    // Initiates GitHub OAuth flow
+  async githubAuth(@Req() req: any, @Res() res: Response) {
+    // Store invitation token in session if present
+    const invitation = req.query.invitation;
+    if (invitation) {
+      req.session = req.session || {};
+      req.session.invitation = invitation;
+    }
   }
 
   @Get('github/callback')
@@ -63,8 +85,20 @@ export class AuthController {
   async githubAuthCallback(@Req() req: any, @Res() res: Response) {
     const tokenData = await this.authService.generateJwtFromUser(req.user);
     
-    // Redirect to frontend with token
+    // Retrieve invitation token from session if present
+    const invitation = req.session?.invitation;
+    
+    // Redirect to frontend with token and invitation if present
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-    res.redirect(`${frontendUrl}/auth/callback?token=${tokenData.access_token}`);
+    const redirectUrl = invitation 
+      ? `${frontendUrl}/auth/callback?token=${tokenData.access_token}&invitation=${invitation}`
+      : `${frontendUrl}/auth/callback?token=${tokenData.access_token}`;
+    
+    // Clear invitation from session
+    if (req.session?.invitation) {
+      delete req.session.invitation;
+    }
+    
+    res.redirect(redirectUrl);
   }
 }
