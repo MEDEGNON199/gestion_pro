@@ -9,10 +9,16 @@ export default function AuthCallback() {
 
   useEffect(() => {
     const token = searchParams.get('token');
+    const invitation = searchParams.get('invitation');
     
     if (token) {
       // Stocker le token
       localStorage.setItem('token', token);
+      
+      // Stocker l'invitation token si présent
+      if (invitation) {
+        sessionStorage.setItem('pendingInvitation', invitation);
+      }
       
       // Décoder le token pour récupérer les infos utilisateur
       try {
@@ -29,7 +35,15 @@ export default function AuthCallback() {
         .then(res => res.json())
         .then(userData => {
           setUser(userData);
-          navigate('/dashboard');
+          
+          // Vérifier s'il y a une invitation en attente
+          const pendingInvitation = sessionStorage.getItem('pendingInvitation');
+          if (pendingInvitation) {
+            sessionStorage.removeItem('pendingInvitation');
+            navigate(`/invitations/${pendingInvitation}`);
+          } else {
+            navigate('/dashboard');
+          }
         })
         .catch(error => {
           console.error('Error fetching user data:', error);

@@ -73,11 +73,7 @@ function AppRoutes() {
       />
       <Route
         path="/invitations/:token"
-        element={
-          <PrivateRoute>
-            <InvitationAccept />
-          </PrivateRoute>
-        }
+        element={<InvitationAccept />}
       />
       <Route
         path="/settings"

@@ -79,11 +79,15 @@ export default function AuthPage() {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/auth/google`;
+    const baseUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/auth/google`;
+    const url = invitationToken ? `${baseUrl}?invitation=${invitationToken}` : baseUrl;
+    window.location.href = url;
   };
 
   const handleGithubLogin = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/auth/github`;
+    const baseUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/auth/github`;
+    const url = invitationToken ? `${baseUrl}?invitation=${invitationToken}` : baseUrl;
+    window.location.href = url;
   };
 
   return (
