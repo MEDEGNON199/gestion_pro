@@ -59,7 +59,7 @@ services:
     name: taskflow-frontend
     env: static
     region: frankfurt
-    buildCommand: cd taskflow-frontend && npm install && npm run build
+    buildCommand: cd taskflow-frontend && chmod +x render-build.sh && ./render-build.sh
     staticPublishPath: taskflow-frontend/dist
     pullRequestPreviewsEnabled: true
     headers:
