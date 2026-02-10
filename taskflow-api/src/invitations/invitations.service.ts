@@ -120,6 +120,12 @@ export class InvitationsService {
     const frontendUrl = this.configService.get('FRONTEND_URL');
     const invitationUrl = `${frontendUrl}/invitations/${invitation.token}`;
 
+    // Validate URL format
+    if (!invitationUrl.match(/^https?:\/\/.+\/invitations\/[a-f0-9]{64}$/i)) {
+      console.error('❌ Format d\'URL d\'invitation invalide:', invitationUrl);
+      throw new Error('Erreur de configuration: URL d\'invitation invalide');
+    }
+
     try {
       await this.brevoService.sendInvitationEmail(
         email,
@@ -172,27 +178,43 @@ export class InvitationsService {
   }
 
   async accepterInvitation(token: string, utilisateur: Utilisateur) {
+    // Validate token format (64-character hex string)
+    if (!token || !/^[a-f0-9]{64}$/i.test(token)) {
+      throw new BadRequestException('Format de token d\'invitation invalide');
+    }
+
     const invitation = await this.invitationRepository.findOne({
       where: { token },
       relations: ['projet'],
     });
 
     if (!invitation) {
-      throw new NotFoundException('Invitation non trouvée');
+      throw new NotFoundException('Invitation non trouvée. Le lien d\'invitation est peut-être invalide ou a été supprimé.');
     }
 
     if (invitation.email !== utilisateur.email) {
-      throw new ForbiddenException('Cette invitation ne vous est pas destinée');
+      throw new ForbiddenException(
+        `Cette invitation est destinée à ${invitation.email} mais vous êtes connecté avec ${utilisateur.email}. Veuillez vous déconnecter et vous connecter avec le bon compte.`
+      );
     }
 
     if (invitation.statut !== StatutInvitation.EN_ATTENTE) {
+      if (invitation.statut === StatutInvitation.ACCEPTEE) {
+        throw new BadRequestException('Cette invitation a déjà été acceptée');
+      } else if (invitation.statut === StatutInvitation.REFUSEE) {
+        throw new BadRequestException('Cette invitation a été refusée');
+      } else if (invitation.statut === StatutInvitation.EXPIREE) {
+        throw new BadRequestException('Cette invitation a expiré');
+      }
       throw new BadRequestException('Cette invitation a déjà été traitée');
     }
 
     if (new Date() > invitation.date_expiration) {
       invitation.statut = StatutInvitation.EXPIREE;
       await this.invitationRepository.save(invitation);
-      throw new BadRequestException('Cette invitation a expiré');
+      throw new BadRequestException(
+        'Cette invitation a expiré. Veuillez contacter le propriétaire du projet pour recevoir une nouvelle invitation.'
+      );
     }
 
     // Vérifier si pas déjà membre
